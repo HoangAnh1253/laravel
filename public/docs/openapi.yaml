@@ -1,0 +1,281 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/user:
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/accounts:
+    get:
+      summary: 'Display a listing of the resource.'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    -
+                      user_name: admin
+                      password: '123'
+                      is_admin: 1
+                    -
+                      user_name: impedit
+                      password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                      is_admin: 0
+                    -
+                      user_name: facere
+                      password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                      is_admin: 0
+                    -
+                      user_name: sit
+                      password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                      is_admin: 0
+                    -
+                      user_name: corrupti
+                      password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                      is_admin: 0
+                    -
+                      user_name: user1
+                      password: '132456'
+                      is_admin: 0
+                    -
+                      user_name: user12
+                      password: '132456'
+                      is_admin: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                      -
+                        user_name: admin
+                        password: '123'
+                        is_admin: 1
+                      -
+                        user_name: impedit
+                        password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                        is_admin: 0
+                      -
+                        user_name: facere
+                        password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                        is_admin: 0
+                      -
+                        user_name: sit
+                        password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                        is_admin: 0
+                      -
+                        user_name: corrupti
+                        password: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+                        is_admin: 0
+                      -
+                        user_name: user1
+                        password: '132456'
+                        is_admin: 0
+                      -
+                        user_name: user12
+                        password: '132456'
+                        is_admin: 1
+                    items:
+                      type: object
+      tags:
+        - 'User Management'
+      security: []
+    post:
+      summary: 'Store a newly created resource in storage.'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                  description: ''
+                  example: ut
+                password:
+                  type: number
+                  description: ''
+                  example: 19185.143296125
+                is_admin:
+                  type: boolean
+                  description: ''
+                  example: true
+              required:
+                - user_name
+      security: []
+  '/api/accounts/{account}':
+    get:
+      summary: 'Display the specified resource.'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    user_name: admin
+                    password: '123'
+                    is_admin: 1
+                properties:
+                  data:
+                    type: object
+                    example:
+                      user_name: admin
+                      password: '123'
+                      is_admin: 1
+      tags:
+        - 'User Management'
+      security: []
+    patch:
+      summary: 'Update the specified resource in storage.'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User Management'
+      security: []
+    delete:
+      summary: 'Remove the specified resource from storage.'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User Management'
+      security: []
+    parameters:
+      -
+        in: path
+        name: account
+        description: ''
+        example: 1
+        required: true
+        schema:
+          type: integer
+tags:
+  -
+    name: Endpoints
+    description: ''
+  -
+    name: 'User Management'
+    description: "\nAPIs to manage user resource"
