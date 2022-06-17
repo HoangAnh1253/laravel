@@ -12,10 +12,16 @@
                     class="btn btn-primary">
                     <i class="fas fa-search">Search</i>
                 </button>
+                <a href="{{ route('equipment') }}" type="button" class="btn btn-info">All</a>
+                <a href="{{ route('filterEquipment', ['category_id' => 1]) }}" type="button"
+                    class="btn btn-info">Laptop</a>
+                <a href="{{ route('filterEquipment', ['category_id' => 2]) }}" type="button" class="btn btn-info">PC</a>
             </div>
         </form>
-        <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary mt-4" data-bs-toggle="modal"
-            data-bs-target="#addEquipModal">Add</button>
+        <div class="mt-4">
+            <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#addEquipModal">Add</button>
+        </div>
         <table class="table">
             <thead class="table-light">
                 <tr>
@@ -29,7 +35,7 @@
             </thead>
             <tbody id="equipment-table-body">
                 @foreach ($equipments as $equipment)
-                    <tr id="{{ $equipment->serial_number }}" class="table-row">
+                    <tr id="{{ $equipment->serial_number }}" class="table-row {{ $equipment->category->title }}">
                         <th scope="row">{{ $equipment->serial_number }}</th>
                         <td class="equipName">{{ $equipment->name }}</td>
                         <td class="equipDesc">{{ $equipment->desc }}</td>
@@ -272,13 +278,28 @@
         }
 
         function searchEquipment(e) {
-            searchInput = $("#search-input")
+            // searchInput = $("#search-input")
+            // searchForm = $("#search-form")
+            // searchForm.prop('action', `/equipments/${searchInput.val()}`)
+            // table = $("#equipment-table-body")
+            // table.children().not(`#${searchInput.val()}`).prop("hidden", true)
             searchForm = $("#search-form")
-            //console.log(searchInput.val(), searchForm);
-            searchForm.prop('action', `/equipments/${searchInput.val()}`)
-            //searchForm.submit()
+            searchInput = $("#search-input")
+            serial_number = searchInput.val();
+            console.log(serial_number, searchForm);
+            searchForm.prop("action", `/equipments/${serial_number}`)
+            searchForm.submit()
+        }
+
+        function filterAll() {
             table = $("#equipment-table-body")
-            table.children().not(`#${searchInput.val()}`).prop("hidden", true)
+            table.children().prop("hidden", false)
+        }
+
+        function filterByCategory(category) {
+            table = $("#equipment-table-body")
+            table.children().not(`#${category}`).prop("hidden", true)
+            table.find(`.${category}`).prop("hidden", false)
         }
     </script>
 @endsection

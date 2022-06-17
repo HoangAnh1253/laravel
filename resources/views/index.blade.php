@@ -18,7 +18,67 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+    {{-- <link rel="stylesheet" href="css/style.css"> --}}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #fff;
+        }
+
+        .navbar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background-color: #0067FF;
+            background-image: linear-gradient(-315deg, #0067FF 0%, #008FFD 30%);
+            transition: 0.4s;
+        }
+
+        .nav-item-active {
+            background-color: #ffffff26;
+        }
+
+        .nav-link {
+            font-size: 1.25em;
+        }
+
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link:hover {
+            background-color: #ffffff12;
+        }
+
+        .dropdown-menu {
+            background-color: #7952b3;
+        }
+
+        .dropdown-item:active,
+        .dropdown-item:focus,
+        .dropdown-item:hover {
+            background-color: #ffffff26;
+        }
+
+        .my-container {
+            transition: 0.4s;
+            margin-left: 250px;
+        }
+
+
+        / for navbar / .active-nav {
+            margin-left: 0;
+        }
+
+        .modal-delete .modal-header {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>

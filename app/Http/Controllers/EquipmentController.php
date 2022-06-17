@@ -89,12 +89,20 @@ class EquipmentController extends Controller
      */
     public function show($equipment)
     {
-        //
-        // $equipment = 
-        // $categories = Category::all();
-        // return view('pages.equipment', ['equipments' => new EquipmentResource($equipment), 'categories' => $categories]);
 
-        // return new EquipmentResource($equipment);
+        $equipments = Equipment::where('serial_number', $equipment)->paginate(5);
+        $categories = Category::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
+        //return redirect('/equipments')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
+
+        //return new EquipmentResource($equipment);
+    }
+
+    public function filter($category_id)
+    {
+        $equipments = Equipment::where('categories_id', $category_id)->paginate(5);
+        $categories = Category::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
     }
 
     /**
