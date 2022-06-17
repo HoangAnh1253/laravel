@@ -3,14 +3,17 @@
 @section('content')
     <section class="p-4 my-container">
         <h1>Equipment</h1>
-        <div class="input-group">
-            <div class="form-outline">
-                <input type="search" id="form1" class="form-control" />
+        <form method="GET" id="search-form">
+            <div class="input-group">
+                <div class="form-outline">
+                    <input type="search" id="search-input" class="form-control" />
+                </div>
+                <button onclick="searchEquipment(event)" id="search-btn" style="height: 38px" type="button"
+                    class="btn btn-primary">
+                    <i class="fas fa-search">Search</i>
+                </button>
             </div>
-            <button style="height: 38px" type="button" class="btn btn-primary">
-                <i class="fas fa-search">Search</i>
-            </button>
-        </div>
+        </form>
         <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary mt-4" data-bs-toggle="modal"
             data-bs-target="#addEquipModal">Add</button>
         <table class="table">
@@ -26,7 +29,7 @@
             </thead>
             <tbody id="equipment-table-body">
                 @foreach ($equipments as $equipment)
-                    <tr id="{{ $equipment->serial_number }}">
+                    <tr id="{{ $equipment->serial_number }}" class="table-row">
                         <th scope="row">{{ $equipment->serial_number }}</th>
                         <td class="equipName">{{ $equipment->name }}</td>
                         <td class="equipDesc">{{ $equipment->desc }}</td>
@@ -82,7 +85,8 @@
         </div>
 
         <!-- Add Equipment Modal -->
-        <div class="modal fade " id="addEquipModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+        <div class="modal fade " id="addEquipModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="false">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -265,6 +269,16 @@
                         data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
                 </td>
             `)
+        }
+
+        function searchEquipment(e) {
+            searchInput = $("#search-input")
+            searchForm = $("#search-form")
+            //console.log(searchInput.val(), searchForm);
+            searchForm.prop('action', `/equipments/${searchInput.val()}`)
+            //searchForm.submit()
+            table = $("#equipment-table-body")
+            table.children().not(`#${searchInput.val()}`).prop("hidden", true)
         }
     </script>
 @endsection

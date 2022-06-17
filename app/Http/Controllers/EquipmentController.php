@@ -87,10 +87,14 @@ class EquipmentController extends Controller
      * @param  \App\Models\Equipment  $equipment
      * @return \Illuminate\Http\Response
      */
-    public function show(Equipment $equipment)
+    public function show($equipment)
     {
         //
-        return new EquipmentResource($equipment);
+        // $equipment = 
+        // $categories = Category::all();
+        // return view('pages.equipment', ['equipments' => new EquipmentResource($equipment), 'categories' => $categories]);
+
+        // return new EquipmentResource($equipment);
     }
 
     /**

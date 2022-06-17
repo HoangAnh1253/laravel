@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EquipmentController;
+use App\Models\Equipment;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,8 @@ Route::middleware('auth:web')->group(function () {
 
 
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipment');
+    Route::get('/equipments/{equipment}', [EquipmentController::class, 'show']);
+
     Route::get('/users', function () {
         return view('pages.user ');
     })->name('user');
@@ -30,6 +33,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/', function () {
         return view('index');
     });
+
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 

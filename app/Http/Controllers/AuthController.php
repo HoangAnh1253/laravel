@@ -63,8 +63,6 @@ class AuthController extends Controller
     {
         Auth::logout();
         $user = Auth::user();
-        return new Response([
-            "data" => $user
-        ]);
+        return redirect('/login');
     }
 }

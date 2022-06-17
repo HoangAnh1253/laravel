@@ -13,7 +13,7 @@
             <a href="{{ route('info') }}" class="nav-link text-light pl-4">My info</a>
         </li>
         <li class="nav-item w-100">
-            <a href="#" class="nav-link text-light pl-4">Logout</a>
+            <a href="{{ route('logout') }}" class="nav-link text-light pl-4">Logout</a>
         </li>
     </ul>
 </nav>

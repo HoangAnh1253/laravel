@@ -71,11 +71,12 @@
                 <input class="form-control" type="password" name="password"required>
             </div>
             <input id="btnLogin" class="btn btn-success w-100" type="submit" value="SIGN IN">
-
-            <div id="alert" class="alert alert-danger alert-dismissible" role="alert">
-                <div>asdasdas</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            @if (isset($status) && $status == 400)
+                <div id="alert" class="alert alert-danger alert-dismissible" role="alert">
+                    <div>Wrong email or password</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         </form>
     </div>
 </body>
