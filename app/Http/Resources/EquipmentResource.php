@@ -19,7 +19,8 @@ class EquipmentResource extends JsonResource
             "name" => $this->name,
             "desc" => $this->desc,
             "status" => $this->status,
-            "category" => $this->category
+            "category" => $this->category,
+            "user" => $this->user
         ];
     }
 }

@@ -27,10 +27,11 @@ class EquipmentController extends Controller
     public function index()
     {
         //
-        $equipments = Equipment::paginate(5);
+        $equipments = Equipment::paginate(6);
         $categories = Category::all();
-        //dd($equipments->toArray());EquipmentResource::collection($equipments->paginate(5))
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
+        $users = User::all();
+        error_log($users);
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
     }
 
     /**
@@ -78,6 +79,12 @@ class EquipmentController extends Controller
         }
         $payload['serial_number'] = $serial;
         $created = $repository->create($payload);
+        $equipments = Equipment::paginate(5);
+        $categories = Category::all();
+        $users = User::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
+
+        
         return new EquipmentResource($created);
     }
 
@@ -89,10 +96,10 @@ class EquipmentController extends Controller
      */
     public function show($equipment)
     {
-
         $equipments = Equipment::where('serial_number', $equipment)->paginate(5);
         $categories = Category::all();
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
+        $users = User::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         //return redirect('/equipments')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
 
         //return new EquipmentResource($equipment);
@@ -102,7 +109,9 @@ class EquipmentController extends Controller
     {
         $equipments = Equipment::where('categories_id', $category_id)->paginate(5);
         $categories = Category::all();
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
+        $users = User::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
+       
     }
 
     /**
@@ -167,7 +176,11 @@ class EquipmentController extends Controller
         $deleted = $repository->softDelete($equipment);
         if (!$deleted)
             return new \Exception("loi r cha");
-        return new EquipmentResource($deleted);
+        $equipments = Equipment::paginate(5);
+        $categories = Category::all();
+        $users = User::all();
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
+        //view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
         //  return redirect('equipments');
     }
 

@@ -22,7 +22,7 @@ class EquipmentFactory extends Factory
         return [
             //
             'serial_number' => $this->faker->numerify('###TMA####'),
-            'name' => $this->faker->name,
+            'name' => $this->faker->word,
             'desc' => $this->faker->text,
             'status' =>  $this->faker->randomElement(['available', 'used']),
             'categories_id' => FactoryHelper::getRandomModelId(Category::class),

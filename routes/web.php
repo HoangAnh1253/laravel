@@ -21,8 +21,11 @@ Route::middleware('auth:web')->group(function () {
 
 
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipment');
+    Route::post('equipments', [EquipmentController::class, 'store']);
+    Route::delete('equipments/{equipment}', [EquipmentController::class, 'disable']);
     Route::get('/equipments/{equipment}', [EquipmentController::class, 'show'])->name('findEquipment');
     Route::get('/equipments/category/{category_id}', [EquipmentController::class, 'filter'])->name('filterEquipment');
+
 
 
     Route::get('/users', function () {
