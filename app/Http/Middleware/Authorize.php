@@ -23,15 +23,8 @@ class Authorize
     {
 
         $user = Auth::user();
-        if (is_null($user)) {
-            return new Response([
-                "message" => "You are not login"
-            ], HttpFoundationResponse::HTTP_NON_AUTHORITATIVE_INFORMATION);
-        }
         if (!$user->is_admin) {
-            return new Response([
-                "message" => "You are not authorize"
-            ], HttpFoundationResponse::HTTP_NON_AUTHORITATIVE_INFORMATION);
+            return redirect()->route('home');
         }
         return $next($request);
     }

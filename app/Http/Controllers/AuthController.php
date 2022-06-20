@@ -21,7 +21,8 @@ class AuthController extends Controller
 
     public function index(Request $request)
     {
-        return view('index');
+        dd($request->is_admin);
+        //return view('index')->with(["is_admin"=>$request->is_admin]);
     }
 
     public function user()
@@ -52,6 +53,7 @@ class AuthController extends Controller
             return response(view('login', ['status' => 400]), HttpFoundationResponse::HTTP_BAD_REQUEST);
         }
         $user = Auth::user();
+        return redirect('/');
         if ($user->is_admin) {
             return redirect('/');
         }

@@ -12,10 +12,12 @@
                     class="btn btn-primary">
                     <i class="fas fa-search">Search</i>
                 </button>
-                <a href="{{ route('equipment') }}" type="button" class="btn btn-info {{ Route::is('equipment') && !isset($filter) ? 'active' : '' }}">All</a>
-                <a  href="{{ route('filterEquipment', ['category_id' => 1]) }}" type="button"
-                    class="btn btn-info {{ isset($filter) && $filter == 'Laptop' ? 'active' : '' }}">LAPTOP</a>
-                <a href="{{ route('filterEquipment', ['category_id' => 2]) }}" type="button" class="btn btn-info {{ isset($filter) && $filter == 'PC' ? 'active' : '' }}">PC</a>
+                <a href="{{ route('equipment') }}" type="button"
+                    class="btn btn-info {{ Route::is('equipment') && !isset($filter) ? 'active' : '' }}">All</a>
+                @foreach ($categories as $category)
+                    <a href="{{ route('filterEquipment', ['category_id' => $category->id]) }}" type="button"
+                        class="btn btn-info {{ isset($filter) && $filter == $category->title ? 'active' : '' }}">{{ $category->title }}</a>
+                @endforeach
             </div>
         </form>
         <div class="mt-4">
@@ -28,8 +30,8 @@
                     <th scope="col">Serial Number</th>
                     <th scope="col">Name</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Using by</th>
                     <th scope="col">Actions</th>
                 </tr>
@@ -40,9 +42,11 @@
                         <th scope="row">{{ $equipment->serial_number }}</th>
                         <td class="equipName">{{ $equipment->name }}</td>
                         <td class="equipDesc">{{ $equipment->desc }}</td>
-                        <td class="equipStatus">{{ $equipment->status }}</td>
                         <td class="equipCategory">{{ $equipment->category->title }}</td>
-                        <td class="equipUser">{{ isset($equipment->user->name) ? $equipment->user->name." (ID:".$equipment->user->id.")" : "" }}</td>
+                        <td class="equipStatus">{{ $equipment->status }}</td>
+                        <td class="equipUser">
+                            {{ isset($equipment->user->name) ? $equipment->user->name . ' (ID:' . $equipment->user->id . ')' : '' }}
+                        </td>
 
                         <td>
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','edit')}" value="1"
@@ -51,6 +55,8 @@
                             <button onclick="openAssignModal('<?php echo $equipment->serial_number; ?>')" class="btn btn-warning"
                                 data-bs-toggle="modal" data-bs-target="#assignEquipModal"><i
                                     class="fas fa-clock"></i>Assign</button>
+                            <button onclick="unAssignEquipment(this.parentNode.parentNode.id)" class="btn btn-secondary"><i
+                                    class="fas fa-clock"></i>Unassigned</button>
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','delete')}" class="btn btn-danger"
                                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
                         </td>
@@ -70,21 +76,27 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="edit-name" class="form-label">Name</label>
-                            <input id="edit-name" type="text" class="form-control" name="edit-name" value="abcd">
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-desc" class="form-label">Description</label>
-                            <input id="edit-desc" type="text" class="form-control" name="edit-desc" value="abcd">
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-status" class="form-label">Status</label>
-                            <input class="ms-2" type="radio" name="status" id="edit-status-available"><label
-                                for="edit-status-available">Available</label>
-                            <input class="ms-2" type="radio" name="status" id="edit-status-used"><label
-                                for="edit-status-used">Used</label>
-                        </div>
+                        <form action="" id="edit-form">
+                            <div class="mb-3">
+                                <label for="edit-name" class="form-label">Name</label>
+                                <input id="edit-name" type="text" class="form-control" name="edit-name" required>
+                                <p style="color: red" hidden id='edit-name-blank-error'>Please fill in this field</p>
+
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-desc" class="form-label">Description</label>
+                                <input id="edit-desc" type="text" class="form-control" name="edit-desc" required>
+                                <p style="color: red" hidden id='edit-desc-blank-error'>Please fill in this field</p>
+
+                            </div>
+                            <div class="mb-3" hidden>
+                                <label for="edit-status" class="form-label">Status</label>
+                                <input class="ms-2" type="radio" name="status" id="edit-status-available"><label
+                                    for="edit-status-available">Available</label>
+                                <input class="ms-2" type="radio" name="status" id="edit-status-used"><label
+                                    for="edit-status-used">Used</label>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -107,22 +119,17 @@
                     </div>
                     <div class="modal-body">
                         <form method="POST" action="/equipments" id="add-equipment-form">
-                            {{csrf_field()}}
-                            <div class="mb-3">
+                            {{ csrf_field() }}
+                            <div class="mb-3 form-group">
                                 <label for="add-name" class="form-label">Name</label>
-                                <input id="add-name" type="text" class="form-control" name="name">
+                                <input id="add-name" type="text" class="form-control" name="name" minlength="3"
+                                    required>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 form-group">
                                 <label for="add-desc" class="form-label">Description</label>
-                                <input id="add-desc" type="text" class="form-control" name="desc">
+                                <input id="add-desc" type="text" class="form-control" name="desc" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="add-status" class="form-label">Status</label>
-                                <input class="ms-2" type="radio" name="status" id="add-status-available"><label
-                                    for="add-status-available">Available</label>
-                                <input class="ms-2" type="radio" name="status" id="add-status-used"><label
-                                    for="add-status-used">Used</label>
-                            </div>
+
                             <div class="mb3">
                                 <label for="add-category" class="form-label">Category</label>
                                 <select id="add-category" class="form-select form-select-sm"
@@ -132,7 +139,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                           
+
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -154,15 +161,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3 autocomplete">
-                            <label for="assign-euqipment-input" class="form-label">User's name</label>
+                            <label for="assign-euqipment-input" class="form-label">User's name or ID</label>
                             <input id="assign-equipment-input" type="text" class="form-control"
                                 name="assign-equipment" value="">
+                            <p style="color: red" hidden id='assign-blank-error'>Please fill in this field</p>
+                            <p style="color: red" hidden id='assign-notfound-error'>User not found</p>
+
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button onclick="assignEquipment()" id="assign-confirm" type="button" class="btn btn-primary"
-                            data-bs-dismiss="modal">Save
+                        <button disabled onclick="assignEquipment()" id="assign-confirm" type="button"
+                            class="btn btn-primary" data-bs-dismiss="modal">Save
                             changes</button>
                     </div>
                 </div>
@@ -212,27 +222,72 @@
     </section>
     <!-- Button trigger modal -->
     <script>
+        var isAssignSelected = false
         let equipments = <?php echo json_encode($equipments); ?>;
         let users = <?php echo json_encode($users); ?>;
-        let usersNameId = users.map(function(user){
+        console.log(users);
+        let usersNameId = users.map(function(user) {
             return `${user.name} (ID: ${user.id})`
         })
-        console.log(usersNameId);
 
-        function openAssignModal(id){
-            autocomplete('assign-equipment-input', usersNameId);    
+        function openAssignModal(id) {
+            autocomplete('assign-equipment-input', usersNameId);
             assignBtn = $("#assign-confirm");
-            assignBtn.data("serial_number",id)
+            assignBtn.data("serial_number", id)
         }
 
-        async function assignEquipment(){
-            serial_number = $("#assign-confirm").data("serial_number")
-            userId = $("#assign-user-id").val()
-            console.log( $("#assign-user-id"));
-            selectdEquipment = equipments.find(equipment=>{
+        async function unAssignEquipment(serial_number) {
+            selectdEquipment = equipments.find(equipment => {
                 return equipment.serial_number == serial_number
             })
 
+            console.log(selectdEquipment);
+            editName = selectdEquipment.name
+            editDesc = selectdEquipment.desc
+
+            payload = {
+                "name": editName,
+                "desc": editDesc,
+                "status": "available",
+                "users_id": ""
+            }
+
+            response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
+            editedRow = $(`#${serial_number}`)
+
+            console.log(response.data.data);
+
+            editedRowUser = editedRow.find(".equipUser")
+            editedRowUser.text("")
+
+            editedRowStatus = editedRow.find(".equipStatus")
+            editedRowStatus.text(response.data.data.status)
+        }
+
+        async function assignEquipment() {
+            console.log($("#assignEquipModal").find(".modal-body"));
+            serial_number = $("#assign-confirm").data("serial_number")
+            userId = $("#assign-user-id").val()
+            selectdEquipment = equipments.find(equipment => {
+                return equipment.serial_number == serial_number
+            })
+            if (!userId || !isAssignSelected) {
+                input = $("#assign-equipment-input").val()
+                index = input.indexOf('(') - 1
+                let userName, id, userNameOrId;
+                if (index >= 0) {
+                    userName = input.substr(0, index)
+                    id = input.substr(index + 6, input.length - 1 - index - 6)
+                } else {
+                    userNameOrId = input
+                }
+                let assignUser = users.find(user => {
+                    return user.id == userNameOrId || user.name == userNameOrId || (user.id == id && user
+                        .name == userName)
+                })
+                if (assignUser)
+                    userId = assignUser.id
+            }
             editName = selectdEquipment.name
             editDesc = selectdEquipment.desc
             editStatus = selectdEquipment.status
@@ -243,14 +298,15 @@
                 "users_id": userId
             }
 
-            console.log(payload);
-
             response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
             editedRow = $(`#${serial_number}`)
 
 
             editedRowUser = editedRow.find(".equipUser")
             editedRowUser.text(`${response.data.data.user.name} (ID: ${response.data.data.user.id})`)
+
+            editedRowStatus = editedRow.find(".equipStatus")
+            editedRowStatus.text(response.data.data.status)
         }
 
         function addDataToModel(id, action) {
@@ -280,17 +336,36 @@
                     }
                     confirmButton = $(`#${action}-confirm`)
                     confirmButton.data("serial_number", id)
+
+                    if (action == 'edit') {
+                        $("#edit-name").on("input", function() {
+                            if (this.value == '') {
+                                $("#edit-name-blank-error").prop("hidden", false)
+                                confirmButton.prop("disabled", true)
+                            } else {
+                                $("#edit-name-blank-error").prop("hidden", true)
+                                if($("#edit-desc-blank-error").prop("hidden"))
+                                    confirmButton.prop("disabled", false)
+                            }
+
+                        })
+                        $("#edit-desc").on("input", function() {
+                            if (this.value == '') {
+                                $("#edit-desc-blank-error").prop("hidden", false)
+                                confirmButton.prop("disabled", true)
+                            } else{
+                                $("#edit-desc-blank-error").prop("hidden", true)
+                                if($("#edit-name-blank-error").prop("hidden"))
+                                    confirmButton.prop("disabled", false)
+                            }
+                        })
+                    }
                 }
             })
 
         }
 
-        // async function deleteEquipment() {
-        //     serial_number = $("#delete-confirm").data("serial_number")
-        //     response = await axios.delete(`http://127.0.0.1:8000/api/equipments/${serial_number}`);
-        //     deletedId = response.data.data.serial_number
-        //     $(`#${deletedId}`).remove()
-        // }
+
 
         function deleteEquipment() {
             let deleteForm = $("#delete-form")
@@ -301,15 +376,18 @@
         }
 
         function addEquipment() {
-            addStatus = $("#add-status-available").prop("checked") ? "available" : "used"
+            addStatus = "available"
             addCategory = $("#add-category").val()
-            $('<input>').attr('type', 'hidden').attr('name', 'status').attr('value', addStatus).appendTo('#add-equipment-form');
+            $('<input>').attr('type', 'hidden').attr('name', 'status').attr('value', addStatus).appendTo(
+                '#add-equipment-form');
             $('<input>').attr('type', 'hidden').attr('name', 'categories_id').attr('value', addCategory).appendTo(
-            '#add-equipment-form');
+                '#add-equipment-form');
+            $("#add-equipment-form").validate();
             $("#add-equipment-form").submit();
         }
 
         async function editEquipment() {
+
             serial_number = $("#edit-confirm").data("serial_number")
             editName = $("#edit-name").val()
             editDesc = $("#edit-desc").val()
@@ -320,65 +398,38 @@
                 "status": editStatus
             }
 
-            response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
-            editedRow = $(`#${serial_number}`)
+            if (editName == '') {
+                $("#edit-name").after("<p>Please fill in this field</p>")
 
-            editedRowName = editedRow.find(".equipName")
-            editedRowName.text(response.data.data.name)
+            } else if (editDesc == '') {
 
-            editedRowDesc = editedRow.find(".equipDesc")
-            editedRowDesc.text(response.data.data.desc)
+                $("#edit-desc").after("<p>Please fill in this field</p>")
+            } else {
+                response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
+                editedRow = $(`#${serial_number}`)
 
-            editedRowStatus = editedRow.find(".equipStatus")
-            editedRowStatus.text(response.data.data.status)
+                editedRowName = editedRow.find(".equipName")
+                editedRowName.text(response.data.data.name)
 
-            for (i = 0; i < equipments.length; i++) {
-                if (equipments[i].serial_number == serial_number) {
-                    equipments[i].name = editedRowName.text()
-                    equipments[i].desc = editedRowDesc.text()
-                    equipments[i].status = editedRowStatus.text()
+                editedRowDesc = editedRow.find(".equipDesc")
+                editedRowDesc.text(response.data.data.desc)
+
+                editedRowStatus = editedRow.find(".equipStatus")
+                editedRowStatus.text(response.data.data.status)
+
+                for (i = 0; i < equipments.length; i++) {
+                    if (equipments[i].serial_number == serial_number) {
+                        equipments[i].name = editedRowName.text()
+                        equipments[i].desc = editedRowDesc.text()
+                        equipments[i].status = editedRowStatus.text()
+                    }
                 }
             }
         }
 
 
-        // async function addEquipment() {
-        //     addName = $("#add-name").val()
-        //     addDesc = $("#add-desc").val()
-        //     addStatus = $("#add-status-available").prop("checked") ? "available" : "used"
-        //     addCategory = $("#add-category").val()
-        //     payload = {
-        //         "name": addName,
-        //         "desc": addDesc,
-        //         "status": addStatus,
-        //         "categories_id": addCategory
-        //     }
-        //     response = await axios.post('http://127.0.0.1:8000/api/equipments/', payload)
-        //     createdEquipment = response.data.data
-        //     $("#equipment-table-body").append(`<tr id="${createdEquipment.serial_number}"></tr>`)
-        //     newRow = $(`#${createdEquipment.serial_number}`)
-        //     newRow.append(`
-    //         <th scope="row">${createdEquipment.serial_number}</th>
-    //         <td class="equipName">${createdEquipment.name}</td>
-    //         <td class="equipDesc">${createdEquipment.desc}</td>
-    //         <td class="equipStatus">${createdEquipment.status}</td>
-    //         <td class="equipCategory">${createdEquipment.category.title}</td>
-    //         <td>
-    //             <button onclick="{addDataToModel('${createdEquipment.serial_number}','edit')}" value="1"
-    //                 class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editEquipModal"><i
-    //                     class="fas fa-clock"></i>Edit</button>
-    //             <button onclick="{addDataToModel('${createdEquipment.serial_number}','delete')}" class="btn btn-danger"
-    //                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
-    //         </td>
-    //     `)
-        // }
 
         function searchEquipment(e) {
-            // searchInput = $("#search-input")
-            // searchForm = $("#search-form")
-            // searchForm.prop('action', `/equipments/${searchInput.val()}`)
-            // table = $("#equipment-table-body")
-            // table.children().not(`#${searchInput.val()}`).prop("hidden", true)
             searchForm = $("#search-form")
             searchInput = $("#search-input")
             serial_number = searchInput.val();
@@ -408,6 +459,13 @@
             /*execute a function when someone writes in the text field:*/
             inp.addEventListener("input", function(e) {
                 let a, b, i, val = this.value;
+                isAssignSelected = false
+                if (val == '') {
+                    $("#assign-confirm").prop("disabled", true)
+                    $("#assign-blank-error").prop("hidden", false)
+                } else {
+                    $("#assign-blank-error").prop("hidden", true)
+                }
                 /*close any already open lists of autocompleted values*/
                 closeAllLists();
                 if (!val) {
@@ -420,11 +478,15 @@
                 a.setAttribute("class", "autocomplete-items");
                 /*append the DIV element as a child of the autocomplete container:*/
                 this.parentNode.appendChild(a);
+                let found = false
                 /*for each item in the array...*/
                 for (let i = 0; i < arr.length; i++) {
-                    /*check if the item starts with the same letters as the text field value:*/
+                    /*check if the item contains the text field value:*/
                     let index = arr[i].toUpperCase().indexOf(val.toUpperCase())
                     if (index >= 0) {
+                        found = true
+                        $("#assign-confirm").prop("disabled", false)
+                        $("#assign-notfound-error").prop("hidden", true)
                         /*create a DIV element for each matching element:*/
                         b = document.createElement("DIV");
                         /*make the matching letters bold:*/
@@ -436,14 +498,20 @@
                         /*execute a function when someone clicks on the item value (DIV element):*/
                         b.addEventListener("click", function(e) {
                             /*insert the value for the autocomplete text field:*/
+                            isAssignSelected = true;
                             inp.value = this.getElementsByTagName("input")[0].value;
-                            inp.innerHTML +=  "<input id='assign-user-id' type='hidden' value='" + users[i].id + "'>";
+                            inp.innerHTML += "<input id='assign-user-id' type='hidden' value='" + users[i]
+                                .id + "'>";
                             /*close the list of autocompleted values,
                             (or any other open lists of autocompleted values:*/
                             closeAllLists();
                         });
                         a.appendChild(b);
                     }
+                }
+                if (!found) {
+                    $("#assign-confirm").prop("disabled", true)
+                    $("#assign-notfound-error").prop("hidden", false)
                 }
             });
             /*execute a function presses a key on the keyboard:*/
@@ -465,6 +533,7 @@
                 } else if (e.keyCode == 13) {
                     /*If the ENTER key is pressed, prevent the form from being submitted,*/
                     e.preventDefault();
+                    isAssignSelected = true
                     if (currentFocus > -1) {
                         /*and simulate a click on the "active" item:*/
                         if (x) x[currentFocus].click();

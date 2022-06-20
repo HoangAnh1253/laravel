@@ -17,7 +17,7 @@ use App\Models\Equipment;
 */
 
 
-Route::middleware('auth:web')->group(function () {
+Route::middleware(['auth:web', 'authorize'])->group(function () {
 
 
     Route::get('/equipments', [EquipmentController::class, 'index'])->name('equipment');
@@ -27,22 +27,26 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/equipments/category/{category_id}', [EquipmentController::class, 'filter'])->name('filterEquipment');
 
 
-
     Route::get('/users', function () {
         return view('pages.user ');
     })->name('user');
 
-    Route::get('/info', function () {
-        return view('pages.info ');
-    })->name('info');
-    Route::get('/', function () {
-        return view('index');
-    });
-
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    
 });
 
+Route::get('/', function () {
+    return view('index');
+})->name('home');
 
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/myEquipments',function () {
+    return view('pages.my_equipments');
+})->name('myEquipments');
+
+Route::get('/info', function () {
+    return view('pages.info ');
+})->name('info');
 
 
 Route::get('/login', function () {

@@ -31,11 +31,15 @@ class EquipmentRepository extends BaseRepository
     function update($equipment, array $attributes)
     {
         return DB::transaction(function () use ($equipment, $attributes) {
+            $users_id = data_get($attributes, 'users_id', '');
+            $status = data_get($attributes, 'status', $equipment->status);
+            if ($users_id != '')
+                $status = 'used';
             $updated = $equipment->update([
                 'name' => data_get($attributes, 'name', $equipment->name),
                 'desc' => data_get($attributes, 'desc', $equipment->desc),
-                'status' => data_get($attributes, 'status', $equipment->status),
-                'users_id' => data_get($attributes, 'users_id', $equipment->users_id)
+                'status' => $status,
+                'users_id' =>  data_get($attributes, 'users_id', $equipment->users_id)
             ]);
             if (!$updated)
                 throw new \Exception('Loi roi cha');

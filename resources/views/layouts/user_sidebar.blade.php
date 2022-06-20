@@ -1,18 +1,8 @@
 <nav class="navbar navbar-expand d-flex flex-column align-item-start" id="sidebar">
     <a href="#" class="navbar-brand text-light mb-4">
-        <div class="display-5 font-weight-bold">TMA</div>
+        <div class="display-5 font-weight-bold">{{$is_admin}}</div>
     </a>
     <ul class="navbar-nav d-flex flex-column  w-100">
-        @auth
-            @if (Auth::user()->is_admin)
-            <li class="nav-item w-100 {{ Route::is('equipment') ? 'nav-item-active' : '' }}">
-                <a href="{{ route('equipment') }}" class="nav-link text-light pl-4">Equipments</a>
-            </li>
-            <li class="nav-item w-100 {{ Route::is('user') ? 'nav-item-active' : '' }}">
-                <a href="{{ route('user') }}" class="nav-link text-light pl-4">Users</a>
-            </li>
-            @endif
-        @endauth
         <li class="nav-item w-100 {{ Route::is('user') ? 'nav-item-active' : '' }}">
             <a href="{{ route('myEquipments') }}" class="nav-link text-light pl-4">My Equipments</a>
         </li>

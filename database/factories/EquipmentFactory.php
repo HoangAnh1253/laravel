@@ -24,7 +24,8 @@ class EquipmentFactory extends Factory
             'serial_number' => $this->faker->numerify('###TMA####'),
             'name' => $this->faker->word,
             'desc' => $this->faker->text,
-            'status' =>  $this->faker->randomElement(['available', 'used']),
+            'status' => 'used',
+            //'status' =>  $this->faker->randomElement(['available', 'used']),
             'categories_id' => FactoryHelper::getRandomModelId(Category::class),
             'users_id' => FactoryHelper::getRandomModelId(User::class),
         ];

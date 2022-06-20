@@ -27,10 +27,9 @@ class EquipmentController extends Controller
     public function index()
     {
         //
-        $equipments = Equipment::paginate(6);
+        $equipments = Equipment::paginate(5);
         $categories = Category::all();
         $users = User::all();
-        error_log($users);
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
     }
 
@@ -82,6 +81,7 @@ class EquipmentController extends Controller
         $equipments = Equipment::paginate(5);
         $categories = Category::all();
         $users = User::all();
+        return redirect()->route('equipment');
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
 
 
@@ -99,6 +99,7 @@ class EquipmentController extends Controller
         $equipments = Equipment::where('serial_number', $equipment)->paginate(5);
         $categories = Category::all();
         $users = User::all();
+
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         //return redirect('/equipments')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
 
@@ -179,6 +180,7 @@ class EquipmentController extends Controller
         $equipments = Equipment::paginate(5);
         $categories = Category::all();
         $users = User::all();
+        return redirect()->route('equipment')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         //view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
         //  return redirect('equipments');
