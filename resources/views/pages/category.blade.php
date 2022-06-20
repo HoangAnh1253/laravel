@@ -19,17 +19,7 @@
                         class="btn btn-info {{ isset($filter) && $filter == $category->title ? 'active' : '' }}">{{ $category->title }}</a>
                 @endforeach
             </div>
-           
         </form>
-        <div>
-            <div  style="display: inline-block" class="form-outline">
-                <input type="search" id="search-by-user-input" class="form-control" />
-            </div>
-            <button  style="display: inline-block" onclick="" id="search-by-user-btn" style="height: 38px" type="button"
-                class="btn btn-primary">
-                <i class="fas fa-search">Search</i>
-            </button>
-        </div>
         <div class="mt-4">
             <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary" data-bs-toggle="modal"
                 data-bs-target="#addEquipModal">Add</button>
@@ -55,7 +45,7 @@
                         <td class="equipCategory">{{ $equipment->category->title }}</td>
                         <td class="equipStatus">{{ $equipment->status }}</td>
                         <td class="equipUser">
-                            {{ isset($equipment->user->name) ? $equipment->user->name . ' (ID: ' . $equipment->user->id . ')' : '' }}
+                            {{ isset($equipment->user->name) ? $equipment->user->name . ' (ID:' . $equipment->user->id . ')' : '' }}
                         </td>
 
                         <td>

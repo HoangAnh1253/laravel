@@ -26,6 +26,7 @@ Route::middleware(['auth:web', 'authorize'])->group(function () {
     Route::get('/equipments/{equipment}', [EquipmentController::class, 'show'])->name('findEquipment');
     Route::get('/equipments/category/{category_id}', [EquipmentController::class, 'filter'])->name('filterEquipment');
 
+    //Route::get('/categories')
 
     Route::get('/users', function () {
         return view('pages.user ');
@@ -38,7 +39,8 @@ Route::get('/', function () {
     return view('index');
 })->name('home');
 
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+//Sidebar route
 
 Route::get('/myEquipments',function () {
     return view('pages.my_equipments');
@@ -48,7 +50,11 @@ Route::get('/info', function () {
     return view('pages.info ');
 })->name('info');
 
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
+
+//Login Route
 Route::get('/login', function () {
     return view('login');
 })->name('login');
