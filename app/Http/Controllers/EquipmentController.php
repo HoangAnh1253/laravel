@@ -191,4 +191,16 @@ class EquipmentController extends Controller
         $user = $equipment->user;
         return new UserResource($user);
     }
+
+    public function getEquipmentsOfUser(User $user)
+    {
+        $equipments = $user->equipments;
+        if(count($equipments) == 0)
+        {
+            $authUser = Auth::user();
+            $equipments = $authUser->equipments;
+            return view('pages.my_equipments')->with(['user' => $user, 'equipments' => $equipments]);
+        }
+        
+    }
 }

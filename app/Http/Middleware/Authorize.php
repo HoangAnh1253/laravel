@@ -21,7 +21,6 @@ class Authorize
      */
     public function handle(Request $request, Closure $next)
     {
-
         $user = Auth::user();
         if (!$user->is_admin) {
             return redirect()->route('home');

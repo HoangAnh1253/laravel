@@ -42,9 +42,8 @@ Route::get('/', function () {
 
 //Sidebar route
 
-Route::get('/myEquipments',function () {
-    return view('pages.my_equipments');
-})->name('myEquipments');
+Route::get('/myEquipments',[EquipmentController::class,"getEquipmentsOfUser"]
+)->name('myEquipments');
 
 Route::get('/info', function () {
     return view('pages.info ');

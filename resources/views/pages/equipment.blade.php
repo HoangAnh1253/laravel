@@ -65,8 +65,11 @@
                             <button onclick="openAssignModal('<?php echo $equipment->serial_number; ?>')" class="btn btn-warning"
                                 data-bs-toggle="modal" data-bs-target="#assignEquipModal"><i
                                     class="fas fa-clock"></i>Assign</button>
-                            <button onclick="unAssignEquipment(this.parentNode.parentNode.id)" class="btn btn-secondary"><i
-                                    class="fas fa-clock"></i>Unassigned</button>
+                           
+                            <button onclick="unAssignEquipment(this.parentNode.parentNode.id,this)" class="btn btn-secondary unassign-btn" {{isset($equipment->user->name)?'':'hidden'}}><i
+                            class="fas fa-clock"></i>Unassigned</button>
+                                
+                           
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','delete')}" class="btn btn-danger"
                                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
                         </td>
@@ -77,6 +80,7 @@
         <div class="d-flex">
             {!! $equipments->links() !!}
         </div>
+
         <!-- Edit Equipment Modal -->
         <div class="modal fade" id="editEquipModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
             <div class="modal-dialog modal-dialog-centered">
@@ -246,7 +250,7 @@
             assignBtn.data("serial_number", id)
         }
 
-        async function unAssignEquipment(serial_number) {
+        async function unAssignEquipment(serial_number, unAssignBtn) {
             selectdEquipment = equipments.find(equipment => {
                 return equipment.serial_number == serial_number
             })
@@ -272,6 +276,8 @@
 
             editedRowStatus = editedRow.find(".equipStatus")
             editedRowStatus.text(response.data.data.status)
+
+            unAssignBtn.hidden = true
         }
 
         async function assignEquipment() {
@@ -317,6 +323,9 @@
 
             editedRowStatus = editedRow.find(".equipStatus")
             editedRowStatus.text(response.data.data.status)
+
+            editedRowUnassignBtn = editedRow.find(".unassign-btn")
+            editedRowUnassignBtn.prop("hidden",false)
         }
 
         function addDataToModel(id, action) {

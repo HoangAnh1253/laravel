@@ -13,7 +13,7 @@
             </li>
             @endif
         @endauth
-        <li class="nav-item w-100 {{ Route::is('user') ? 'nav-item-active' : '' }}">
+        <li class="nav-item w-100 {{ Route::is('myEquipments') ? 'nav-item-active' : '' }}">
             <a href="{{ route('myEquipments') }}" class="nav-link text-light pl-4">My Equipments</a>
         </li>
         <li class="nav-item w-100 {{ Route::is('info') ? 'nav-item-active' : '' }}">
