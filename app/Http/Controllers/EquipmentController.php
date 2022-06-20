@@ -84,7 +84,7 @@ class EquipmentController extends Controller
         $users = User::all();
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
 
-        
+
         return new EquipmentResource($created);
     }
 
@@ -110,8 +110,8 @@ class EquipmentController extends Controller
         $equipments = Equipment::where('categories_id', $category_id)->paginate(5);
         $categories = Category::all();
         $users = User::all();
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
-       
+        $category = Category::find($category_id);
+        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users, 'filter' => $category->title]);
     }
 
     /**

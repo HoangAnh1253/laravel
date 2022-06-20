@@ -12,10 +12,10 @@
                     class="btn btn-primary">
                     <i class="fas fa-search">Search</i>
                 </button>
-                <a href="{{ route('equipment') }}" type="button" class="btn btn-info">All</a>
-                <a href="{{ route('filterEquipment', ['category_id' => 1]) }}" type="button"
-                    class="btn btn-info">Laptop</a>
-                <a href="{{ route('filterEquipment', ['category_id' => 2]) }}" type="button" class="btn btn-info">PC</a>
+                <a href="{{ route('equipment') }}" type="button" class="btn btn-info {{ Route::is('equipment') && !isset($filter) ? 'active' : '' }}">All</a>
+                <a  href="{{ route('filterEquipment', ['category_id' => 1]) }}" type="button"
+                    class="btn btn-info {{ isset($filter) && $filter == 'Laptop' ? 'active' : '' }}">LAPTOP</a>
+                <a href="{{ route('filterEquipment', ['category_id' => 2]) }}" type="button" class="btn btn-info {{ isset($filter) && $filter == 'PC' ? 'active' : '' }}">PC</a>
             </div>
         </form>
         <div class="mt-4">
@@ -132,6 +132,7 @@
                                     @endforeach
                                 </select>
                             </div>
+                           
                         </form>
                     </div>
                     <div class="modal-footer">
