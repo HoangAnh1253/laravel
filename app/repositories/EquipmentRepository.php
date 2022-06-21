@@ -21,6 +21,7 @@ class EquipmentRepository extends BaseRepository
                 'categories_id' => data_get($attributes, 'categories_id'),
                 'users_id' => data_get($attributes, 'users_id', null)
             ]);
+            
             return $created;
         });
     }

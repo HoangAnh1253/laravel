@@ -80,6 +80,7 @@
             color: white;
         }
 
+        
 
         .autocomplete-items {
             position: absolute;
@@ -119,9 +120,12 @@
 
     @yield('content')
 
-    <!-- bootstrap js -->
-    <!-- custom js -->
-    <script></script>
+  
+    <script>
+        @if (session()->get('message'))
+        alert('You are not authorize')
+        @endif
+    </script>
 </body>
 
 </html>

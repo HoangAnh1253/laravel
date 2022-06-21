@@ -23,7 +23,7 @@ class Authorize
     {
         $user = Auth::user();
         if (!$user->is_admin) {
-            return redirect()->route('home');
+            return redirect()->route('home')->with(["message" => "not authorize"]);
         }
         return $next($request);
     }

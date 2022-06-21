@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EquipmentController;
 use App\Models\Equipment;
@@ -25,8 +26,10 @@ Route::middleware(['auth:web', 'authorize'])->group(function () {
     Route::delete('/equipments/{equipment}', [EquipmentController::class, 'disable']);
     Route::get('/equipments/{equipment}', [EquipmentController::class, 'show'])->name('findEquipment');
     Route::get('/equipments/category/{category_id}', [EquipmentController::class, 'filter'])->name('filterEquipment');
+    Route::get('/equipments/user/{user}', [EquipmentController::class, 'getEquipmentsOfUser'])->name('userEquipments');
 
-    //Route::get('/categories')
+    Route::get('/categories', [CategoryController::class, 'index'])->name('category');
+
 
     Route::get('/users', function () {
         return view('pages.user ');

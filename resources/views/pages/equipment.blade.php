@@ -19,22 +19,26 @@
                         class="btn btn-info {{ isset($filter) && $filter == $category->title ? 'active' : '' }}">{{ $category->title }}</a>
                 @endforeach
             </div>
-           
+
         </form>
-        <div>
-            <div  style="display: inline-block" class="form-outline">
-                <input type="search" id="search-by-user-input" class="form-control" />
-            </div>
-            <button  style="display: inline-block" onclick="" id="search-by-user-btn" style="height: 38px" type="button"
+
+        <div style="position: relative" class="autocomplete form-outline">
+            <label style="margin-top: 40px" for=""><b>Filter by User</b></label>
+            <input id="search-by-user-input" class="form-control" />
+            <p style="color: red" hidden id='search-user-equipment-blank-error'>Please fill in this field</p>
+            <p style="color: red" hidden id='search-user-equipment-notfound-error'>User not found</p>
+
+            <button onclick="searchUserEquipments()" id="search-user-equipment-confirm" style="height: 38px" type="button"
                 class="btn btn-primary">
-                <i class="fas fa-search">Search</i>
+                <i id="" class="fas fa-search">Search</i>
             </button>
+            <form id="search-user-equipment-form" method="GET" action="" hidden></form>
         </div>
         <div class="mt-4">
             <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary" data-bs-toggle="modal"
                 data-bs-target="#addEquipModal">Add</button>
         </div>
-        <table class="table">
+        <table class="table table-hover">
             <thead class="table-light">
                 <tr>
                     <th scope="col">Serial Number</th>
@@ -65,11 +69,13 @@
                             <button onclick="openAssignModal('<?php echo $equipment->serial_number; ?>')" class="btn btn-warning"
                                 data-bs-toggle="modal" data-bs-target="#assignEquipModal"><i
                                     class="fas fa-clock"></i>Assign</button>
-                           
-                            <button onclick="unAssignEquipment(this.parentNode.parentNode.id,this)" class="btn btn-secondary unassign-btn" {{isset($equipment->user->name)?'':'hidden'}}><i
-                            class="fas fa-clock"></i>Unassigned</button>
-                                
-                           
+
+                            <button onclick="unAssignEquipment(this.parentNode.parentNode.id,this)"
+                                class="btn btn-secondary unassign-btn"
+                                {{ isset($equipment->user->name) ? '' : 'hidden' }}><i
+                                    class="fas fa-clock"></i>Unassigned</button>
+
+
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','delete')}" class="btn btn-danger"
                                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
                         </td>
@@ -239,13 +245,46 @@
         var isAssignSelected = false
         let equipments = <?php echo json_encode($equipments); ?>;
         let users = <?php echo json_encode($users); ?>;
-        console.log(users);
+
         let usersNameId = users.map(function(user) {
             return `${user.name} (ID: ${user.id})`
         })
 
+
+        $("#search-by-user-input").on('focus', function() {
+            autocomplete('search-by-user-input', usersNameId, 'search-user-equipment');
+        })
+
+
+        function searchUserEquipments() {
+            userId = $("#search-user-equipment-user-id").val()
+            if (!userId || !isAssignSelected) {
+
+                input = $("#search-by-user-input").val()
+                index = input.indexOf('(') - 1
+                console.log(index);
+                id = -1
+                userName = ''
+                if (index >= 0) {
+                    userName = input.substr(0, index)
+                    id = input.substr(index + 6, input.length - 1 - index - 6)
+                } else {
+                    userNameOrId = input
+                }
+                let assignUser = users.find(user => {
+                    return user.id == userNameOrId || user.name == userNameOrId || (user.id == id && user.name ==
+                        userName)
+                })
+                if (assignUser)
+                    userId = assignUser.id
+            }
+            searchForm = $("#search-user-equipment-form")
+            searchForm.prop("action", `/equipments/user/${userId}`)
+            searchForm.submit()
+        }
+
         function openAssignModal(id) {
-            autocomplete('assign-equipment-input', usersNameId);
+            autocomplete('assign-equipment-input', usersNameId, 'assign');
             assignBtn = $("#assign-confirm");
             assignBtn.data("serial_number", id)
         }
@@ -255,7 +294,7 @@
                 return equipment.serial_number == serial_number
             })
 
-            console.log(selectdEquipment);
+
             editName = selectdEquipment.name
             editDesc = selectdEquipment.desc
 
@@ -269,7 +308,7 @@
             response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
             editedRow = $(`#${serial_number}`)
 
-            console.log(response.data.data);
+
 
             editedRowUser = editedRow.find(".equipUser")
             editedRowUser.text("")
@@ -281,7 +320,7 @@
         }
 
         async function assignEquipment() {
-            console.log($("#assignEquipModal").find(".modal-body"));
+
             serial_number = $("#assign-confirm").data("serial_number")
             userId = $("#assign-user-id").val()
             selectdEquipment = equipments.find(equipment => {
@@ -325,7 +364,7 @@
             editedRowStatus.text(response.data.data.status)
 
             editedRowUnassignBtn = editedRow.find(".unassign-btn")
-            editedRowUnassignBtn.prop("hidden",false)
+            editedRowUnassignBtn.prop("hidden", false)
         }
 
         function addDataToModel(id, action) {
@@ -363,7 +402,7 @@
                                 confirmButton.prop("disabled", true)
                             } else {
                                 $("#edit-name-blank-error").prop("hidden", true)
-                                if($("#edit-desc-blank-error").prop("hidden"))
+                                if ($("#edit-desc-blank-error").prop("hidden"))
                                     confirmButton.prop("disabled", false)
                             }
 
@@ -372,9 +411,9 @@
                             if (this.value == '') {
                                 $("#edit-desc-blank-error").prop("hidden", false)
                                 confirmButton.prop("disabled", true)
-                            } else{
+                            } else {
                                 $("#edit-desc-blank-error").prop("hidden", true)
-                                if($("#edit-name-blank-error").prop("hidden"))
+                                if ($("#edit-name-blank-error").prop("hidden"))
                                     confirmButton.prop("disabled", false)
                             }
                         })
@@ -390,7 +429,7 @@
             let deleteForm = $("#delete-form")
             let serial_number = $("#delete-confirm").data("serial_number")
             deleteForm.prop("action", `/equipments/${serial_number}`)
-            console.log(deleteForm, serial_number);
+
             deleteForm.submit()
         }
 
@@ -452,7 +491,7 @@
             searchForm = $("#search-form")
             searchInput = $("#search-input")
             serial_number = searchInput.val();
-            console.log(serial_number, searchForm);
+
             searchForm.prop("action", `/equipments/${serial_number}`)
             searchForm.submit()
         }
@@ -469,21 +508,20 @@
         }
 
 
-        function autocomplete(id, arr) {
+        function autocomplete(id, arr, action) {
             /*the autocomplete function takes two arguments,
             the text field element and an array of possible autocompleted values:*/
             let currentFocus;
             inp = document.getElementById(id);
-            console.log(inp);
             /*execute a function when someone writes in the text field:*/
             inp.addEventListener("input", function(e) {
                 let a, b, i, val = this.value;
                 isAssignSelected = false
                 if (val == '') {
-                    $("#assign-confirm").prop("disabled", true)
-                    $("#assign-blank-error").prop("hidden", false)
+                    $(`#${action}-confirm`).prop("disabled", true)
+                    $(`#${action}-blank-error`).prop("hidden", false)
                 } else {
-                    $("#assign-blank-error").prop("hidden", true)
+                    $(`#${action}-blank-error`).prop("hidden", true)
                 }
                 /*close any already open lists of autocompleted values*/
                 closeAllLists();
@@ -493,19 +531,23 @@
                 currentFocus = -1;
                 /*create a DIV element that will contain the items (values):*/
                 a = document.createElement("DIV");
+
                 a.setAttribute("id", this.id + "autocomplete-list");
                 a.setAttribute("class", "autocomplete-items");
+
                 /*append the DIV element as a child of the autocomplete container:*/
                 this.parentNode.appendChild(a);
                 let found = false
                 /*for each item in the array...*/
                 for (let i = 0; i < arr.length; i++) {
+
                     /*check if the item contains the text field value:*/
                     let index = arr[i].toUpperCase().indexOf(val.toUpperCase())
                     if (index >= 0) {
+
                         found = true
-                        $("#assign-confirm").prop("disabled", false)
-                        $("#assign-notfound-error").prop("hidden", true)
+                        $(`#${action}-confirm`).prop("disabled", false)
+                        $(`#${action}-notfound-error`).prop("hidden", true)
                         /*create a DIV element for each matching element:*/
                         b = document.createElement("DIV");
                         /*make the matching letters bold:*/
@@ -515,22 +557,26 @@
                         /*insert a input field that will hold the current array item's value:*/
                         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
                         /*execute a function when someone clicks on the item value (DIV element):*/
+
                         b.addEventListener("click", function(e) {
                             /*insert the value for the autocomplete text field:*/
+
                             isAssignSelected = true;
                             inp.value = this.getElementsByTagName("input")[0].value;
-                            inp.innerHTML += "<input id='assign-user-id' type='hidden' value='" + users[i]
+                            inp.innerHTML += "<input id='" + action + "-user-id' type='hidden' value='" +
+                                users[i]
                                 .id + "'>";
                             /*close the list of autocompleted values,
                             (or any other open lists of autocompleted values:*/
                             closeAllLists();
                         });
                         a.appendChild(b);
+
                     }
                 }
                 if (!found) {
-                    $("#assign-confirm").prop("disabled", true)
-                    $("#assign-notfound-error").prop("hidden", false)
+                    $(`#${action}-confirm`).prop("disabled", true)
+                    $(`#${action}-notfound-error`).prop("hidden", false)
                 }
             });
             /*execute a function presses a key on the keyboard:*/

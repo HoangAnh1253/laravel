@@ -6,19 +6,23 @@ use App\Http\Resources\EquipmentResource;
 use App\Http\Resources\UserResource;
 use App\Models\Category;
 use App\Models\Equipment;
-use App\Repositories\EquipmentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-
-
+use App\Service\EquipmentService;
 
 class EquipmentController extends Controller
 {
+
+    protected $equipmentService;
+
+    public function __construct(EquipmentService $equipmentService)
+    {
+        $this->equipmentService = $equipmentService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,43 +53,11 @@ class EquipmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, EquipmentRepository $repository)
+    public function store(Request $request)
     {
         //
-        $payload = $request->only([
-            'name',
-            'desc',
-            'status',
-            'categories_id',
-            'users_id'
-        ]);
-
-        $validator = Validator::make($payload, [
-            'name' => ['required', 'string'],
-            'desc' => ['required', 'string'],
-            'status' => ['in:available,used']
-        ]);
-
-        if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
-        }
-        $category = Category::find($payload['categories_id']);
-        $hash = Hash::make($payload['name']);
-        $serial = substr($hash, 9, 3) . $category->title . substr($hash, 7, 6);
-        while (!ctype_alnum($serial)) {
-            $hash = Hash::make($payload['name']);
-            $serial = substr($hash, 9, 3) . $category->title . substr($hash, 7, 6);
-        }
-        $payload['serial_number'] = $serial;
-        $created = $repository->create($payload);
-        $equipments = Equipment::paginate(5);
-        $categories = Category::all();
-        $users = User::all();
+        $this->equipmentService->create($request);
         return redirect()->route('equipment');
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
-
-
-        return new EquipmentResource($created);
     }
 
     /**
@@ -101,9 +73,6 @@ class EquipmentController extends Controller
         $users = User::all();
 
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
-        //return redirect('/equipments')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
-
-        //return new EquipmentResource($equipment);
     }
 
     public function filter($category_id)
@@ -133,26 +102,10 @@ class EquipmentController extends Controller
      * @param  \App\Models\Equipment  $equipment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Equipment $equipment, EquipmentRepository $repository)
+    public function update(Request $request, Equipment $equipment)
     {
         //
-        $payload = $request->only([
-            'name',
-            'desc',
-            'status',
-            'users_id'
-        ]);
-
-        $validator = Validator::make($payload, [
-            'name' => ['required', 'string'],
-            'desc' => ['required', 'string'],
-            'status' => ['in:available,used']
-        ]);
-        if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
-        }
-
-        $updated = $repository->update($equipment, $payload);
+        $updated = $this->equipmentService->update($request, $equipment);
         return new EquipmentResource($updated);
     }
 
@@ -162,28 +115,21 @@ class EquipmentController extends Controller
      * @param  \App\Models\Equipment  $equipment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Equipment $equipment, EquipmentRepository $repository)
+    public function destroy(Equipment $equipment)
     {
         //
-        $deleted = $repository->forceDelete($equipment);
+        $deleted = $this->equipmentService->destroy($equipment);
         if (!$deleted)
             return new \Exception("loi r cha");
         return new EquipmentResource($deleted);
     }
 
-    public function disable(Equipment $equipment, EquipmentRepository $repository)
+    public function disable(Equipment $equipment)
     {
-
-        $deleted = $repository->softDelete($equipment);
+        $deleted = $this->equipmentService->disable($equipment);
         if (!$deleted)
             return new \Exception("loi r cha");
-        $equipments = Equipment::paginate(5);
-        $categories = Category::all();
-        $users = User::all();
-        return redirect()->route('equipment')->with(['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
-        return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
-        //view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories]);
-        //  return redirect('equipments');
+        return redirect()->route('equipment');
     }
 
     public function getUser(Equipment $equipment)
@@ -194,13 +140,17 @@ class EquipmentController extends Controller
 
     public function getEquipmentsOfUser(User $user)
     {
-        $equipments = $user->equipments;
-        if(count($equipments) == 0)
-        {
+        
+        $equipments = Equipment::where("users_id", $user->id)->paginate(5);
+     
+        $categories = Category::all();
+        $users = User::all();
+        if (is_null($user->id)) {
             $authUser = Auth::user();
             $equipments = $authUser->equipments;
             return view('pages.my_equipments')->with(['user' => $user, 'equipments' => $equipments]);
+        } else {
+            return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         }
-        
     }
 }
