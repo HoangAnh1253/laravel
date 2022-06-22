@@ -11,7 +11,7 @@ class UserRepository implements BaseRepository
 {
     function create(array $attributes)
     {
-        //return new Response(["data" => $attributes->is]);
+       
         return DB::transaction(function () use ($attributes) {
             $created = User::create([
                 'email' => data_get($attributes, 'email'),
@@ -31,7 +31,10 @@ class UserRepository implements BaseRepository
      */
     function update($user, array $attributes)
     {
+        dd('oke');
+
         return DB::transaction(function () use ($user, $attributes) {
+            dd('oke');
             $updated = $user->update([
                 'name' => data_get($attributes, 'name', $user->name),
                 'gender' => data_get($attributes, 'gender', $user->gender),

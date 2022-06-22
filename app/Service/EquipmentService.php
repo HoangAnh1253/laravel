@@ -19,7 +19,8 @@ class EquipmentService
         $this->equipmentRepository = $equipmentRepository;
     }
 
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         $payload = $request->only([
             'name',
             'desc',
@@ -48,7 +49,8 @@ class EquipmentService
         $this->equipmentRepository->create($payload);
     }
 
-    public function update(Request $request, Equipment $equipment){
+    public function update(Request $request, Equipment $equipment)
+    {
         $payload = $request->only([
             'name',
             'desc',
@@ -68,11 +70,22 @@ class EquipmentService
         return $this->equipmentRepository->update($equipment, $payload);
     }
 
-    public function disable(Equipment $equipment){
+    public function disable(Equipment $equipment)
+    {
         return $this->equipmentRepository->softDelete($equipment);
     }
 
-    public function destroy(Equipment $equipment){
+    public function destroy(Equipment $equipment)
+    {
         return $this->equipmentRepository->forceDelete($equipment);
+    }
+
+    public  function unassign(Equipment $equipment)
+    {
+        $payload = [
+            "status" => "available",
+            "users_id" => null
+        ];
+        return $this->equipmentRepository->update($equipment, $payload);
     }
 }

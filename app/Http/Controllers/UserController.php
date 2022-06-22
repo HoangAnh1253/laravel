@@ -148,7 +148,7 @@ class UserController extends Controller
         $deleted = $repository->softDelete($user);
         if (!$deleted)
             return new \Exception("loi r cha");
-        return new UserResource($deleted);
+        return redirect()->route('user');
     }
 
     public function getEquipments(User $user)

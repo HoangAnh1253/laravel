@@ -35,6 +35,7 @@ Route::middleware(['auth:web', 'authorize'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('user');
     Route::post('/users', [UserController::class, 'store'])->name('addUser');
+    Route::delete('/users/{user}', [UserController::class, 'disable'])->name('deleteUser');
     
     Route::get('/', [AuthController::class, 'index'])->name('home');
 });

@@ -245,7 +245,7 @@
         var isAssignSelected = false
         let equipments = <?php echo json_encode($equipments); ?>;
         let users = <?php echo json_encode($users); ?>;
-
+    
         let usersNameId = users.map(function(user) {
             return `${user.name} (ID: ${user.id})`
         })

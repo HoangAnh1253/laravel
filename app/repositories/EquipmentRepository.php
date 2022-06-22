@@ -58,6 +58,8 @@ class EquipmentRepository implements BaseRepository
         });
     }
 
+    
+
     function softDelete($model)
     {
         return DB::transaction(function () use ($model) {
