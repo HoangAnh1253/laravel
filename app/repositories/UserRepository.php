@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -31,12 +32,13 @@ class UserRepository implements BaseRepository
      */
     function update($user, array $attributes)
     {
-        dd('oke');
-
+       
         return DB::transaction(function () use ($user, $attributes) {
-            dd('oke');
+
             $updated = $user->update([
                 'name' => data_get($attributes, 'name', $user->name),
+                'email' => data_get($attributes, 'email', $user->email),
+                'phone_number' => data_get($attributes, 'phone_number', $user->phone_number),
                 'gender' => data_get($attributes, 'gender', $user->gender),
                 'birthdate' => data_get($attributes, 'birthdate', $user->birthdate),
                 'password' => data_get($attributes, 'password', $user->password)

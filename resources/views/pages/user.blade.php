@@ -91,7 +91,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button id="add-confirm" onclick="{addUser()}" type="button"
                             class="btn btn-success">Confirm</button>
                     </div>
@@ -111,45 +111,48 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="edit-name-input" class="form-label">Name</label>
-                            <input id="edit-name-input" type="text" class="form-control" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-email-input" class="form-label">Email</label>
-                            <input id="edit-email-input" type="email" class="form-control" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-gender-input" class="form-label">Gender</label>
-                            <div class="form-check ms-4" style="display: inline-block ">
-                                <input class="form-check-input" type="radio" name="gender" value='1'
-                                    id="edit-gender-male" checked>
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                    Male
-                                </label>
+                        <form action="" id="editUserForm" method="POST">
+                            <div class="mb-3">
+                                <label for="edit-name-input" class="form-label">Name</label>
+                                <input id="edit-name-input" type="text" class="form-control" name="name" required>
                             </div>
-                            <div class="form-check ms-4" style="display: inline-block ">
-                                <input class="form-check-input" type="radio" name="gender" value='0'
-                                    id="edit-gender-female">
-                                <label class="form-check-label" for="flexRadioDefault2">
-                                    Female
-                                </label>
+                            <div class="mb-3">
+                                <label for="edit-email-input" class="form-label">Email</label>
+                                <input id="edit-email-input" type="email" class="form-control" name="email"
+                                    required>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-birthdate-input" class="form-label">Birthdate</label>
-                            <input id="edit-birthdate-input" type="date" class="form-control" name="birthdate"
-                                max={{ date_create('now')->format('Y-m-d') }} required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-phone-input" class="form-label">Phone Number</label>
-                            <input id="edit-phone-input" type="text" class="form-control" name="phone_number"
-                                required minlength="9" maxlength="11">
-                        </div>
+                            <div class="mb-3">
+                                <label for="edit-gender-input" class="form-label">Gender</label>
+                                <div class="form-check ms-4" style="display: inline-block ">
+                                    <input class="form-check-input" type="radio" name="gender" value='1'
+                                        id="edit-gender-male" checked>
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="form-check ms-4" style="display: inline-block ">
+                                    <input class="form-check-input" type="radio" name="gender" value='0'
+                                        id="edit-gender-female">
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                        Female
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-birthdate-input" class="form-label">Birthdate</label>
+                                <input id="edit-birthdate-input" type="date" class="form-control" name="birthdate"
+                                    max={{ date_create('now')->format('Y-m-d') }} required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-phone-input" class="form-label">Phone Number</label>
+                                <input id="edit-phone-input" type="text" class="form-control" name="phone_number"
+                                    required minlength="9" maxlength="11">
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button id="edit-confirm" onclick="{editUser()}" type="button" data-bs-dismiss="modal"
+                        <button id="edit-confirm" onclick="{editUser()}" type="button"
                             class="btn btn-success">Confirm</button>
                     </div>
                 </div>
@@ -172,15 +175,17 @@
                             {{ method_field('DELETE') }}
                             <div class="mb-3">
                                 <label for="delete-name-input" class="form-label">Name</label>
-                                <input id="delete-name-input" type="text" class="form-control" name="name" disabled>
+                                <input id="delete-name-input" type="text" class="form-control" name="name"
+                                    disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="delete-email-input" class="form-label">Email</label>
-                                <input id="delete-email-input" type="email" class="form-control" name="email" disabled>
+                                <input id="delete-email-input" type="email" class="form-control" name="email"
+                                    disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="delete-gender-input" class="form-label">Gender</label>
-                                <div  class="form-check ms-4" style="display: inline-block ">
+                                <div class="form-check ms-4" style="display: inline-block ">
                                     <input class="form-check-input" type="radio" name="gender" value='1'
                                         id="delete-gender-male" checked disabled>
                                     <label class="form-check-label" for="flexRadioDefault1">
@@ -203,7 +208,7 @@
                             <div class="mb-3">
                                 <label for="delete-phone-input" class="form-label">Phone Number</label>
                                 <input id="delete-phone-input" type="text" class="form-control" name="phone_number"
-                                disabled minlength="9" maxlength="11">
+                                    disabled minlength="9" maxlength="11">
                             </div>
                         </form>
                     </div>
@@ -219,7 +224,7 @@
     </section>
     <script>
         users = <?php echo json_encode($users); ?>;
-      
+
         function addDataToModal(id, action) {
             let user = users.find(user => {
                 return user.id == id
@@ -233,15 +238,15 @@
                 maleRadio.prop("checked", true)
                 femaleRadio.prop("checked", false)
 
-            }else{
+            } else {
                 maleRadio.prop("checked", false)
                 femaleRadio.prop("checked", true)
 
             }
-           
-            $(`#${action}-birthdate-input`).val(user.birthdate.substr(0,10))
+
+            $(`#${action}-birthdate-input`).val(user.birthdate.substr(0, 10))
             $(`#${action}-phone-input`).val(user.phone_number)
-          
+
             confirmButton = $(`#${action}-confirm`)
             confirmButton.data("id", id)
         }
@@ -252,7 +257,52 @@
             form.submit()
         }
 
-        function deleteUser(){
+        async function editUser() {
+            userId= $("#edit-confirm").data("id")
+            editForm = $("#editUserForm")
+            name = $("#edit-name-input").val()
+            birthdate = $("#edit-birthdate-input").val()
+            email = $("#edit-email-input").val()
+            gender = $("#edit-gender-male").prop("checked")
+            phone = $("#edit-phone-input").val()
+            
+            payload = {
+                name: name,
+                email: email,
+                birthdate: birthdate,
+                phone_number: phone,
+                gender: gender
+            }
+            response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
+            updatedUser = response.data.data
+            
+            editedRow = $(`#${updatedUser.id}`)
+            updateBirthdate = new Date(updatedUser.birthdate)
+
+            editedRow.find('.userName').text(updatedUser.name)
+            editedRow.find('.userEmail').text(updatedUser.email)
+            editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
+            editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
+            editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
+            
+            editModal = $("#editUserModal")
+            editModal.find(".btn-secondary").click()
+            
+
+            
+            // response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${userId}`, payload)
+
+            // editForm.on('submit', async function(event) {
+            //     event.preventDefault()
+            //     console.log(payload);
+            //     console.log(response);
+            // })
+            // editForm.validate()
+            // editForm.submit()
+           
+        }
+
+        function deleteUser() {
             deleteForm = $("#delete-form")
             userId = $("#delete-confirm").data("id")
             deleteForm.prop("action", `/users/${userId}`)

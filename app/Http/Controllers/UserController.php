@@ -106,22 +106,35 @@ class UserController extends Controller
     public function update(Request $request, User $user, UserRepository $repository)
     {
         //
+       
         $payload = $request->only([
             "name",
+            "email",
             "gender",
             "birthdate",
-            "password"
+            "password",
+            "phone_number"
         ]);
         $validator = Validator::make($request->all(), [
             'name' => ['string'],
+            'email' => ['email'],
             'gender' => ['boolean'],
             'bithdate' => ['date'],
             'password' => ['min:6']
         ]);
+      
+
         if ($validator->stopOnFirstFailure()->fails()) {
             return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
         }
-        $payload["password"] = Hash::make($payload["password"]);
+      
+       
+
+        if(!isset($payload["password"]))
+        {
+            $payload["password"] = $user->password;
+        }else
+            $payload["password"] = Hash::make($payload["password"]);
         $updated = $repository->update($user, $payload);
         if (!$updated)
             return new \Exception("loi r cha");
