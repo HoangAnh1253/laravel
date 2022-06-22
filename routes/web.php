@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\UserController;
 use App\Models\Equipment;
 
 /*
@@ -29,18 +30,15 @@ Route::middleware(['auth:web', 'authorize'])->group(function () {
     Route::get('/equipments/user/{user}', [EquipmentController::class, 'getEquipmentsOfUser'])->name('userEquipments');
 
     Route::get('/categories', [CategoryController::class, 'index'])->name('category');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('addCategory');
+    Route::delete('/categories/{category}', [CategoryController::class, 'disable'])->name('disableCategory');
 
-
-    Route::get('/users', function () {
-        return view('pages.user ');
-    })->name('user');
-
+    Route::get('/users', [UserController::class, 'index'])->name('user');
+    Route::post('/users', [UserController::class, 'store'])->name('addUser');
     
+    Route::get('/', [AuthController::class, 'index'])->name('home');
 });
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
 
 
 //Sidebar route

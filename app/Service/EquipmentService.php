@@ -4,16 +4,12 @@ namespace App\Service;
 
 use App\Repositories\EquipmentRepository;
 use Illuminate\Http\Request;
-use App\Http\Resources\EquipmentResource;
-use App\Http\Resources\UserResource;
 use App\Models\Category;
 use App\Models\Equipment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 
 class EquipmentService

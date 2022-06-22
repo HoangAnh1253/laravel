@@ -25,7 +25,8 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::get();
+        $users = User::paginate(5);
+        return view('pages.user', ["users" => UserResource::collection($users)]);
         return UserResource::collection($users);
     }
 
@@ -49,20 +50,27 @@ class UserController extends Controller
     {
         //
         $payload = $request->only([
+            'name',
             'email',
-            'password',
+            'birthdate',
+            'gender',
+            'phone_number',
             'is_admin'
         ]);
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'email', 'unique:users,email'],
+        if(!isset($payload['password']))
+            $payload['password'] = "password";
+        $validator = Validator::make($payload, [
+            'email' => ['required', 'email', 'unique:users'],
             'password' => ['string', 'min:6'],
         ]);
+        
         if ($validator->stopOnFirstFailure()->fails()) {
             return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
         }
+        
         $payload['password'] = Hash::make($payload['password']);
         $created = $repository->create($payload);
-        return new UserResource($created);
+        return redirect()->route('user');
     }
 
     /**

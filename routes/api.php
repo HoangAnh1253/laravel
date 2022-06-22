@@ -17,5 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/api/users.php';
 require __DIR__ . '/api/equipments.php';
+require __DIR__ . '/api/categories.php';
 
 //require __DIR__ . '/api/auth.php';

@@ -29,7 +29,7 @@
             <p style="color: red" hidden id='search-user-equipment-notfound-error'>User not found</p>
 
             <button onclick="searchUserEquipments()" id="search-user-equipment-confirm" style="height: 38px" type="button"
-                class="btn btn-primary">
+                class="btn btn-primary" disabled> 
                 <i id="" class="fas fa-search">Search</i>
             </button>
             <form id="search-user-equipment-form" method="GET" action="" hidden></form>
@@ -370,7 +370,6 @@
         function addDataToModel(id, action) {
             $(async function() {
                 if (id) {
-
                     let equipment = {}
                     for (i = 0; i < equipments.length; i++) {
                         if (equipments[i].serial_number === id) {
@@ -378,7 +377,6 @@
                             break
                         }
                     }
-
                     editNameInput = $(`#${action}-name`)
                     editNameInput.val(equipment.name);
 
@@ -423,13 +421,10 @@
 
         }
 
-
-
         function deleteEquipment() {
             let deleteForm = $("#delete-form")
             let serial_number = $("#delete-confirm").data("serial_number")
             deleteForm.prop("action", `/equipments/${serial_number}`)
-
             deleteForm.submit()
         }
 

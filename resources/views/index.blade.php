@@ -80,7 +80,7 @@
             color: white;
         }
 
-        
+
 
         .autocomplete-items {
             position: absolute;
@@ -111,6 +111,19 @@
             background-color: DodgerBlue !important;
             color: #ffffff;
         }
+
+        label.error {
+            color: red;
+            font-size: 1rem;
+            display: block;
+            margin-top: 5px;
+        }
+
+        input.error {
+            border: 1px dashed red;
+            font-weight: 300;
+            color: red;
+        }
     </style>
 </head>
 
@@ -120,10 +133,10 @@
 
     @yield('content')
 
-  
+
     <script>
         @if (session()->get('message'))
-        alert('You are not authorize')
+            alert('You are not authorize')
         @endif
     </script>
 </body>

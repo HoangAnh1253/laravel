@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class UserRepository extends BaseRepository
+class UserRepository implements BaseRepository
 {
     function create(array $attributes)
     {
@@ -15,6 +15,10 @@ class UserRepository extends BaseRepository
         return DB::transaction(function () use ($attributes) {
             $created = User::create([
                 'email' => data_get($attributes, 'email'),
+                'name' => data_get($attributes, 'name'),
+                'birthdate' => data_get($attributes, 'birthdate'),
+                'gender' => data_get($attributes, 'gender'),
+                'phone_number' => data_get($attributes, 'phone_number'),
                 'password' => data_get($attributes, 'password'),
                 'is_admin' => data_get($attributes, 'is_admin', false)
             ]);

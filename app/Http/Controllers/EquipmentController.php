@@ -142,7 +142,6 @@ class EquipmentController extends Controller
     {
         
         $equipments = Equipment::where("users_id", $user->id)->paginate(5);
-     
         $categories = Category::all();
         $users = User::all();
         if (is_null($user->id)) {

@@ -7,7 +7,7 @@ use App\Models\Equipment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class EquipmentRepository extends BaseRepository
+class EquipmentRepository implements BaseRepository
 {
     function create(array $attributes)
     {

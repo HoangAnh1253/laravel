@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-abstract class BaseRepository
+interface  BaseRepository
 {
-    abstract function create(array $attributes);
-    abstract function update($model, array $attributes);
-    abstract function forceDelete($model);
+     function create(array $attributes);
+     function update($model, array $attributes);
+     function forceDelete($model);
 }
