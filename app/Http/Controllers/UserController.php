@@ -91,12 +91,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user, UserRepository $repository)
     {
-        //
+        
        
         $updated = $this->userService->update($request, $user);
-        if (!$updated)
-            return new \Exception("loi r cha");
-        return new UserResource($updated);
+        return $updated;
     }
 
     /**

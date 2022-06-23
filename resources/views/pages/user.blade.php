@@ -1,7 +1,13 @@
 @extends('index')
 
 @section('content')
-    <section class="p-4 my-container">
+    <section id="user-section" class="p-4 my-container">
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
+                <div>{{ session('error') }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <h1>Users</h1>
         <button onclick="addDataToModal(false, 'add')" type="button" class="btn btn-primary" data-bs-toggle="modal"
             data-bs-target="#addUserModal"><i class="fa-solid fa-plus"></i>Add</button>
@@ -29,7 +35,7 @@
                         <td>
                             <button onclick="addDataToModal({{ $user->id }}, 'edit')" type="button"
                                 class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editUserModal"><i
-                                class="fas fa-pen-to-square"></i>Edit</button>
+                                    class="fas fa-pen-to-square"></i>Edit</button>
                             <button onclick="addDataToModal({{ $user->id }}, 'delete')" type="button"
                                 class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteUserModal">Delete</button>
@@ -86,8 +92,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="add-phone-input" class="form-label">Phone Number</label>
-                                <input id="add-phone-input" type="text" class="form-control" name="phone_number" required
-                                    minlength="9" maxlength="11">
+                                <input id="add-phone-input" type="text" class="form-control" name="phone_number"
+                                    required minlength="9" maxlength="11">
                             </div>
                         </form>
                     </div>
@@ -279,31 +285,46 @@
             editForm.on('submit', async function(event) {
                 event.preventDefault()
                 response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
-                updatedUser = response.data.data
+                error = response.data.error ? response.data.error : ''
+                if (error) {
+                    userSection = $("#user-section")
+                  
+                    if(userSection.find(".alert-danger").length == 0)
+                    {
+                        $("#user-section").prepend(`
+                        <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
+                            <div>${error}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`);
+                    }
+                } else {
+                    updatedUser = response.data.data
 
-                editedRow = $(`#${updatedUser.id}`)
-                updateBirthdate = new Date(updatedUser.birthdate)
+                    editedRow = $(`#${updatedUser.id}`)
+                    updateBirthdate = new Date(updatedUser.birthdate)
 
-                editedRow.find('.userName').text(updatedUser.name)
-                editedRow.find('.userEmail').text(updatedUser.email)
-                editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
-                editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
-                editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
+                    editedRow.find('.userName').text(updatedUser.name)
+                    editedRow.find('.userEmail').text(updatedUser.email)
+                    editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
+                    editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
+                    editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
 
-                for(i = 0; i < users.length ; i++)
-                {
-                    if(users[i].id = updatedUser.id){
-                        users[i].name = updatedUser.name
-                        users[i].email = updatedUser.email
-                        users[i].phone_number = updatedUser.phone_number
-                        users[i].gender = updatedUser.gender
-                        users[i].birthdate = updatedUser.birthdate
+                    for (i = 0; i < users.length; i++) {
+                        if (users[i].id = updatedUser.id) {
+                            users[i].name = updatedUser.name
+                            users[i].email = updatedUser.email
+                            users[i].phone_number = updatedUser.phone_number
+                            users[i].gender = updatedUser.gender
+                            users[i].birthdate = updatedUser.birthdate
+                        }
                     }
                 }
+
 
                 editModal = $("#editUserModal")
                 editModal.find(".btn-secondary").click()
             })
+            
             editForm.validate()
             editForm.submit()
 
@@ -314,6 +335,14 @@
             userId = $("#delete-confirm").data("id")
             deleteForm.prop("action", `/users/${userId}`)
             deleteForm.submit()
+        }
+
+        //This code close alert not found
+        const alertTrigger = document.getElementById('liveAlertBtn')
+        if (alertTrigger) {
+            alertTrigger.addEventListener('click', () => {
+                alert('Nice, you triggered this alert message!', 'success')
+            })
         }
     </script>
 @endsection

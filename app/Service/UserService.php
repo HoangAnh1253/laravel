@@ -2,12 +2,14 @@
 
 namespace App\Service;
 
+use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
@@ -58,7 +60,7 @@ class UserService
         ]);
         
         if ($validator->stopOnFirstFailure()->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
+            return back()->withError($validator->errors()->first());
         }
         
         $payload['password'] = Hash::make($payload['password']);
@@ -76,16 +78,20 @@ class UserService
         ]);
         $validator = Validator::make($payload, [
             'name' => ['string'],
-            'email' => ['email', 'unique:users'],
+            'email' => ['email', Rule::unique('users')->ignore($user)],
             'gender' => ['boolean'],
             'bithdate' => ['date'],
             'password' => ['min:6'],
             "phone_number" => ['min:8']
         ]);
       
-
+        
         if ($validator->stopOnFirstFailure()->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
+            return response()->json([
+                "error" =>  $validator->errors()->first()
+            ]);
+            return Response::json(["error" => $validator->errors()->first()]);
+            // error_log($validator->errors()->first());
         }
         
         if(!isset($payload["password"]))
@@ -93,7 +99,8 @@ class UserService
             $payload["password"] = $user->password;
         }else
             $payload["password"] = Hash::make($payload["password"]);
-        return $this->userRepository->update($user, $payload);
+        return new UserResource($this->userRepository->update($user, $payload));
+
     }
 
     public function disable(User $user){
