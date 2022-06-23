@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateExamineeRequest;
 use App\Http\Resources\EquipmentResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
-
+use App\Service\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +17,13 @@ use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class UserController extends Controller
 {
+
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -24,10 +31,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
-        $users = User::paginate(5);
+        $users = $this->userService->getUserWherePaginate('is_admin', false);
         return view('pages.user', ["users" => UserResource::collection($users)]);
-        return UserResource::collection($users);
     }
 
     /**
@@ -46,30 +51,11 @@ class UserController extends Controller
      * @param  \App\Http\Requests\StoreExamineeRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, UserRepository $repository)
+    public function store(Request $request)
     {
         //
-        $payload = $request->only([
-            'name',
-            'email',
-            'birthdate',
-            'gender',
-            'phone_number',
-            'is_admin'
-        ]);
-        if(!isset($payload['password']))
-            $payload['password'] = "password";
-        $validator = Validator::make($payload, [
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['string', 'min:6'],
-        ]);
         
-        if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
-        }
-        
-        $payload['password'] = Hash::make($payload['password']);
-        $created = $repository->create($payload);
+        $this->userService->create($request);
         return redirect()->route('user');
     }
 
@@ -107,35 +93,7 @@ class UserController extends Controller
     {
         //
        
-        $payload = $request->only([
-            "name",
-            "email",
-            "gender",
-            "birthdate",
-            "password",
-            "phone_number"
-        ]);
-        $validator = Validator::make($request->all(), [
-            'name' => ['string'],
-            'email' => ['email'],
-            'gender' => ['boolean'],
-            'bithdate' => ['date'],
-            'password' => ['min:6']
-        ]);
-      
-
-        if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
-        }
-      
-       
-
-        if(!isset($payload["password"]))
-        {
-            $payload["password"] = $user->password;
-        }else
-            $payload["password"] = Hash::make($payload["password"]);
-        $updated = $repository->update($user, $payload);
+        $updated = $this->userService->update($request, $user);
         if (!$updated)
             return new \Exception("loi r cha");
         return new UserResource($updated);

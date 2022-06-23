@@ -4,7 +4,7 @@
     <section class="p-4 my-container">
         <h1>Users</h1>
         <button onclick="addDataToModal(false, 'add')" type="button" class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#addUserModal">Add</button>
+            data-bs-target="#addUserModal"><i class="fa-solid fa-plus"></i>Add</button>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -28,7 +28,8 @@
                         <td class="userPhonenumber">{{ $user->phone_number }}</td>
                         <td>
                             <button onclick="addDataToModal({{ $user->id }}, 'edit')" type="button"
-                                class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                                class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editUserModal"><i
+                                class="fas fa-pen-to-square"></i>Edit</button>
                             <button onclick="addDataToModal({{ $user->id }}, 'delete')" type="button"
                                 class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteUserModal">Delete</button>
@@ -91,7 +92,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button id="add-confirm" onclick="{addUser()}" type="button"
                             class="btn btn-success">Confirm</button>
                     </div>
@@ -146,7 +147,7 @@
                             <div class="mb-3">
                                 <label for="edit-phone-input" class="form-label">Phone Number</label>
                                 <input id="edit-phone-input" type="text" class="form-control" name="phone_number"
-                                    required minlength="9" maxlength="11">
+                                    required minlength="9">
                             </div>
                         </form>
                     </div>
@@ -258,14 +259,14 @@
         }
 
         async function editUser() {
-            userId= $("#edit-confirm").data("id")
+            userId = $("#edit-confirm").data("id")
             editForm = $("#editUserForm")
             name = $("#edit-name-input").val()
             birthdate = $("#edit-birthdate-input").val()
             email = $("#edit-email-input").val()
             gender = $("#edit-gender-male").prop("checked")
             phone = $("#edit-phone-input").val()
-            
+
             payload = {
                 name: name,
                 email: email,
@@ -273,33 +274,39 @@
                 phone_number: phone,
                 gender: gender
             }
-            response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
-            updatedUser = response.data.data
-            
-            editedRow = $(`#${updatedUser.id}`)
-            updateBirthdate = new Date(updatedUser.birthdate)
 
-            editedRow.find('.userName').text(updatedUser.name)
-            editedRow.find('.userEmail').text(updatedUser.email)
-            editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
-            editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
-            editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
-            
-            editModal = $("#editUserModal")
-            editModal.find(".btn-secondary").click()
-            
 
-            
-            // response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${userId}`, payload)
+            editForm.on('submit', async function(event) {
+                event.preventDefault()
+                response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
+                updatedUser = response.data.data
 
-            // editForm.on('submit', async function(event) {
-            //     event.preventDefault()
-            //     console.log(payload);
-            //     console.log(response);
-            // })
-            // editForm.validate()
-            // editForm.submit()
-           
+                editedRow = $(`#${updatedUser.id}`)
+                updateBirthdate = new Date(updatedUser.birthdate)
+
+                editedRow.find('.userName').text(updatedUser.name)
+                editedRow.find('.userEmail').text(updatedUser.email)
+                editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
+                editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
+                editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
+
+                for(i = 0; i < users.length ; i++)
+                {
+                    if(users[i].id = updatedUser.id){
+                        users[i].name = updatedUser.name
+                        users[i].email = updatedUser.email
+                        users[i].phone_number = updatedUser.phone_number
+                        users[i].gender = updatedUser.gender
+                        users[i].birthdate = updatedUser.birthdate
+                    }
+                }
+
+                editModal = $("#editUserModal")
+                editModal.find(".btn-secondary").click()
+            })
+            editForm.validate()
+            editForm.submit()
+
         }
 
         function deleteUser() {

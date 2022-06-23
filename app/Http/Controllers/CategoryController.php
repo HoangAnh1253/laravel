@@ -23,7 +23,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::paginate(5);
+        $categories =  $this->categoryService->getAllCategoryPaginate(5);
         return view('pages.category')->with(["categories" => $categories]);
     }
 

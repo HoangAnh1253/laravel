@@ -26,7 +26,6 @@ class AuthController extends Controller
 
     public function user()
     {
-        $users = User::get();
         return new Response([
             'id' => Auth::user()
         ]);
@@ -51,14 +50,12 @@ class AuthController extends Controller
         if (!$token) {
             return response(view('login', ['status' => 400]), HttpFoundationResponse::HTTP_BAD_REQUEST);
         }
-        $user = Auth::user();
         return redirect()->route('home');
     }
 
     public function logout()
     {
         Auth::logout();
-        $user = Auth::user();
         return redirect('/login');
     }
 }

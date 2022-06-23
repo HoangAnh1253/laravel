@@ -2,14 +2,36 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class UserRepository implements BaseRepository
 {
+
+    function getAllUser(){
+        return User::get();
+    }
+
+    function getAllUserPaginate(int $paginate){
+        return User::paginate($paginate);
+    }
+
+    function getUserWhere(string $field, $value){
+        if($field != '')
+        {
+            return User::where($field, $value)->get();
+        }
+        return User::all();
+    }
+
+    function getUserWherePaginate(string $field, $value, int $paginate){
+        if($field != '')
+        {
+            return User::where($field, $value)->paginate($paginate);
+        }
+        return User::paginate($paginate);
+    }
+    
     function create(array $attributes)
     {
        

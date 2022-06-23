@@ -5,10 +5,10 @@ namespace App\Service;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Models\Equipment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 
@@ -20,6 +20,29 @@ class CategoryService
         $this->categoryRepository = $categoryRepository;
     }
 
+    public function getAllCategory(){
+        return $this->categoryRepository->getAllCategory();
+     }
+ 
+     public function getAllCategoryPaginate(int $paginate = 6){
+         return $this->categoryRepository->getAllCategoryPaginate($paginate);
+      }
+
+
+    public function getCategoryWhere(string $field = '', $value = '')
+    {
+        return $this->categoryRepository->getCategoryWhere($field , $value);
+    }
+
+    public function getCategoryWherePaginate(string $field = '', $value = '', $paginate = 6){
+        return $this->categoryRepository->getCategoryWherePaginate($field, $value, $paginate);
+    }
+
+    public function findCategoryById(string $id){
+        return $this->categoryRepository->findCategoryById($id);
+    }
+        
+
     public function create(Request $request){
         $payload = $request->only([
             'title'
@@ -30,7 +53,7 @@ class CategoryService
         ]);
 
         if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
+            throw new InvalidArgumentException($validator->errors()->first());
         }
         
         $this->categoryRepository->create($payload);
@@ -45,7 +68,7 @@ class CategoryService
             'title' => ['required', 'string'],
         ]);
         if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
+            throw new InvalidArgumentException($validator->errors()->first());
         }
 
         return $this->categoryRepository->update($category, $payload);
@@ -56,6 +79,6 @@ class CategoryService
     }
 
     public function destroy(Category $category){
-        return $this->equipmentRepository->forceDelete($category);
+        return $this->categoryRepository->forceDelete($category);
     }
 }

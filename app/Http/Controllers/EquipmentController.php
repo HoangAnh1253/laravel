@@ -11,16 +11,21 @@ use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Service\CategoryService;
 use App\Service\EquipmentService;
+use App\Service\UserService;
+use Illuminate\Support\Facades\DB;
 
 class EquipmentController extends Controller
 {
 
-    protected $equipmentService;
+    protected $equipmentService, $userService;
 
-    public function __construct(EquipmentService $equipmentService)
+    public function __construct(EquipmentService $equipmentService, UserService $userService, CategoryService $categoryService)
     {
         $this->equipmentService = $equipmentService;
+        $this->userService = $userService;
+        $this->categoryService = $categoryService;
     }
 
     /**
@@ -31,9 +36,10 @@ class EquipmentController extends Controller
     public function index()
     {
         //
-        $equipments = Equipment::paginate(5);
-        $categories = Category::all();
-        $users = User::all();
+        $equipments = $this->equipmentService->getAllEquipmentPaginate();
+        $categories = $this->categoryService->getAllCategory();
+        $users = $this->userService->getAllUser();
+
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
     }
 
@@ -68,19 +74,18 @@ class EquipmentController extends Controller
      */
     public function show($equipment)
     {
-        $equipments = Equipment::where('serial_number', $equipment)->paginate(5);
-        $categories = Category::all();
-        $users = User::all();
-
+        $equipments = $this->equipmentService->getEquipmentWherePaginate('serial_number', $equipment, 5);
+        $categories =  $this->categoryService->getAllCategory();
+        $users = $this->userService->getAllUser();
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
     }
 
     public function filter($category_id)
     {
-        $equipments = Equipment::where('categories_id', $category_id)->paginate(5);
-        $categories = Category::all();
-        $users = User::all();
-        $category = Category::find($category_id);
+        $equipments = $this->equipmentService->getEquipmentWherePaginate('categories_id', $category_id, 5);;
+        $categories = $this->categoryService->getAllCategory();
+        $users = $this->userService->getAllUser();
+        $category = $this->categoryService->findCategoryById($category_id);
         return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users, 'filter' => $category->title]);
     }
 
@@ -140,10 +145,9 @@ class EquipmentController extends Controller
 
     public function getEquipmentsOfUser(User $user)
     {
-        
-        $equipments = Equipment::where("users_id", $user->id)->paginate(5);
-        $categories = Category::all();
-        $users = User::all();
+        $equipments = $this->equipmentService->getEquipmentWherePaginate("users_id",$user->id, 5);
+        $categories = $this->categoryService->getAllCategory();
+        $users = $this->userService->getAllUser();
         if (is_null($user->id)) {
             $authUser = Auth::user();
             $equipments = $authUser->equipments;
@@ -152,4 +156,55 @@ class EquipmentController extends Controller
             return view('pages.equipment', ['equipments' => EquipmentResource::collection($equipments), 'categories' => $categories, 'users' => $users]);
         }
     }
+
 }
+//     public function search(Request $request)
+//     {
+//         if ($request->ajax()) {
+//             $output = "";
+//             $equipments = DB::table('equipment')->where('name', 'LIKE', '%' . $request->search . "%")->get();
+
+//             if ($equipments) {
+//                 foreach ($equipments as $equipment) {
+//                     $category = Category::find($equipment->categories_id);
+//                     $user = User::find($equipment->users_id);
+//                     if(!isset($user->name))
+//                     {
+//                         $user->name = '';
+//                     }
+//                     $output .= "
+//                     <tr id='$equipment->serial_number' class='table-row  $category->title '>
+//                         <th scope='row'> $equipment->serial_number </th>
+//                         <td class='equipName'> $equipment->name </td>
+//                         <td class='equipDesc'> $equipment->desc </td>
+//                         <td class='equipCategory'> $category->title </td>
+//                         <td class='equipStatus'> $equipment->status </td>
+//                         <td class='equipUser'>$user->name</td>
+//                     </tr>
+//                     ";
+//                 }
+//                 return Response($output);
+//             }
+//         }
+//     }
+// }
+
+
+//{{ isset({$equipment->nam}) ? {$equipment->nam} . ' (ID: ' . {$equipment->nam} . ')' : '' }}
+// <td>
+// <button onclick='{addDataToModel('{$equipment->serial_number}','edit')}'
+// value='1'
+// class='btn btn-success' data-bs-toggle='modal' data-bs-target='#editEquipModal'><i
+// class='fas fa-clock'></i>Edit</button>
+// <button onclick='openAssignModal('{$equipment->serial_number}')' class='btn btn-warning'
+// data-bs-toggle='modal' data-bs-target='#assignEquipModal'><i class='fas fa-clock'></i>Assign</button>
+
+// <button onclick='unAssignEquipment(this.parentNode.parentNode.id,this)' class='btn btn-secondary unassign-btn'
+// {{ isset({$equipment->user->name}) ? '' : 'hidden' }}><i class='fas fa-clock'></i>Unassigned</button>
+
+
+//                     <button onclick='{addDataToModel('{$equipment->serial_number}','delete')}'
+// class='btn btn-danger'
+// data-bs-toggle='modal' data-bs-target='#deleteEquipModal'>Delete</button>
+// </td>
+// </tr>

@@ -9,6 +9,35 @@ use Illuminate\Support\Facades\Log;
 
 class CategoryRepository implements BaseRepository
 {
+
+    function getAllCategory(){
+        return Category::get();
+    }
+
+    function getAllCategoryPaginate(int $paginate){
+        return Category::paginate($paginate);
+    }
+
+    function getCategoryWhere(string $field, $value){
+        if($field != '')
+        {
+            return Category::where($field, $value)->get();
+        }
+        return Category::all();
+    }
+
+    function getCategoryWherePaginate(string $field, $value, int $paginate){
+        if($field != '')
+        {
+            return Category::where($field, $value)->paginate($paginate);
+        }
+        return Category::paginate($paginate);
+    }
+    
+    public function findCategoryById($id){
+        return Category::find($id);
+    }
+
     function create(array $attributes)
     {
         //return new Response(["data" => $attributes->is]);

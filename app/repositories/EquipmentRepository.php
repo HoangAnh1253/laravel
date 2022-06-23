@@ -9,6 +9,31 @@ use Illuminate\Support\Facades\Log;
 
 class EquipmentRepository implements BaseRepository
 {
+
+    function getAllEquipment(){
+        return Equipment::get();
+    }
+
+    function getAllEquipmentPaginate(int $paginate){
+        return Equipment::paginate($paginate);
+    }
+
+    function getEquipmentWhere(string $field, $value){
+        if($field != '')
+        {
+            return Equipment::where($field, $value)->get();
+        }
+        return Equipment::all();
+    }
+
+    function getEquipmentWherePaginate(string $field, $value, int $paginate){
+        if($field != '')
+        {
+            return Equipment::where($field, $value)->paginate($paginate);
+        }
+        return Equipment::paginate($paginate);
+    }
+
     function create(array $attributes)
     {
         //return new Response(["data" => $attributes->is]);

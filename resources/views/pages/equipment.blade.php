@@ -19,24 +19,29 @@
                         class="btn btn-info {{ isset($filter) && $filter == $category->title ? 'active' : '' }}">{{ $category->title }}</a>
                 @endforeach
             </div>
-
+            @if (count($equipments) == 0)
+                <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
+                    <div>Equipment not found</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         </form>
 
         <div style="position: relative" class="autocomplete form-outline">
             <label style="margin-top: 40px" for=""><b>Filter by User</b></label>
             <input id="search-by-user-input" class="form-control" />
-            <p style="color: red" hidden id='search-user-equipment-blank-error'>Please fill in this field</p>
+
             <p style="color: red" hidden id='search-user-equipment-notfound-error'>User not found</p>
 
             <button onclick="searchUserEquipments()" id="search-user-equipment-confirm" style="height: 38px" type="button"
-                class="btn btn-primary" disabled> 
+                class="btn btn-primary" disabled>
                 <i id="" class="fas fa-search">Search</i>
             </button>
             <form id="search-user-equipment-form" method="GET" action="" hidden></form>
         </div>
         <div class="mt-4">
             <button onclick="{addDataToModel(false,'addEquipModal')}" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#addEquipModal">Add</button>
+                data-bs-target="#addEquipModal"><i class="fa-solid fa-plus"></i>Add</button>
         </div>
         <table class="table table-hover">
             <thead class="table-light">
@@ -65,19 +70,20 @@
                         <td>
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','edit')}" value="1"
                                 class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editEquipModal"><i
-                                    class="fas fa-clock"></i>Edit</button>
+                                    class="fas fa-pen-to-square"></i>Edit</button>
                             <button onclick="openAssignModal('<?php echo $equipment->serial_number; ?>')" class="btn btn-warning"
                                 data-bs-toggle="modal" data-bs-target="#assignEquipModal"><i
-                                    class="fas fa-clock"></i>Assign</button>
+                                    class="fas fa-user-check"></i>Assign</button>
 
                             <button onclick="unAssignEquipment(this.parentNode.parentNode.id,this)"
                                 class="btn btn-secondary unassign-btn"
                                 {{ isset($equipment->user->name) ? '' : 'hidden' }}><i
-                                    class="fas fa-clock"></i>Unassigned</button>
+                                    class="fas fa-user-xmark"></i>Unassigned</button>
 
 
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','delete')}" class="btn btn-danger"
                                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
+                               
                         </td>
                     </tr>
                 @endforeach
@@ -192,7 +198,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button disabled onclick="assignEquipment()" id="assign-confirm" type="button"
-                            class="btn btn-primary" data-bs-dismiss="modal">Save
+                            class="btn btn-primary">Save
                             changes</button>
                     </div>
                 </div>
@@ -244,8 +250,9 @@
     <script>
         var isAssignSelected = false
         let equipments = <?php echo json_encode($equipments); ?>;
-        let users = <?php echo json_encode($users); ?>;
-    
+        console.log(equipments);
+        users = <?php echo json_encode($users); ?>;
+
         let usersNameId = users.map(function(user) {
             return `${user.name} (ID: ${user.id})`
         })
@@ -278,9 +285,15 @@
                 if (assignUser)
                     userId = assignUser.id
             }
-            searchForm = $("#search-user-equipment-form")
-            searchForm.prop("action", `/equipments/user/${userId}`)
-            searchForm.submit()
+            if (!userId) {
+                $(`#search-user-equipment-notfound-error`).prop("hidden", false)
+                $(`#search-user-equipment-confirm`).prop("disabled", true)
+            } else {
+                searchForm = $("#search-user-equipment-form")
+                searchForm.prop("action", `/equipments/user/${userId}`)
+                searchForm.submit()
+            }
+
         }
 
         function openAssignModal(id) {
@@ -343,28 +356,41 @@
                 if (assignUser)
                     userId = assignUser.id
             }
-            editName = selectdEquipment.name
-            editDesc = selectdEquipment.desc
-            editStatus = selectdEquipment.status
-            payload = {
-                "name": editName,
-                "desc": editDesc,
-                "status": editStatus,
-                "users_id": userId
+
+            if (!userId) {
+                $(`#assign-notfound-error`).prop("hidden", false)
+                $(`#assign-confirm`).prop("disabled", true)
+            } else {
+
+
+
+                editName = selectdEquipment.name
+                editDesc = selectdEquipment.desc
+                editStatus = selectdEquipment.status
+                payload = {
+                    "name": editName,
+                    "desc": editDesc,
+                    "status": editStatus,
+                    "users_id": userId
+                }
+
+                response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
+                editedRow = $(`#${serial_number}`)
+
+
+                editedRowUser = editedRow.find(".equipUser")
+                editedRowUser.text(`${response.data.data.user.name} (ID: ${response.data.data.user.id})`)
+
+                editedRowStatus = editedRow.find(".equipStatus")
+                editedRowStatus.text(response.data.data.status)
+
+                editedRowUnassignBtn = editedRow.find(".unassign-btn")
+                editedRowUnassignBtn.prop("hidden", false)
+
+                assignModal = $("#assignEquipModal")
+                assignModal.find(".btn-secondary").click()
             }
 
-            response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
-            editedRow = $(`#${serial_number}`)
-
-
-            editedRowUser = editedRow.find(".equipUser")
-            editedRowUser.text(`${response.data.data.user.name} (ID: ${response.data.data.user.id})`)
-
-            editedRowStatus = editedRow.find(".equipStatus")
-            editedRowStatus.text(response.data.data.status)
-
-            editedRowUnassignBtn = editedRow.find(".unassign-btn")
-            editedRowUnassignBtn.prop("hidden", false)
         }
 
         function addDataToModel(id, action) {
@@ -455,7 +481,6 @@
                 $("#edit-name").after("<p>Please fill in this field</p>")
 
             } else if (editDesc == '') {
-
                 $("#edit-desc").after("<p>Please fill in this field</p>")
             } else {
                 response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
@@ -633,6 +658,35 @@
             document.addEventListener("click", function(e) {
                 closeAllLists(e.target);
             });
+        }
+
+        // $.ajaxSetup({
+        //     headers: {
+        //         'csrftoken': '{{ csrf_token() }}'
+        //     }
+        // });
+
+        // $('#search-input').on('keyup', function() {
+        //     $value = $(this).val();
+        //     $.ajax({
+        //         type: 'get',
+        //         url: '{{ URL::to('/equipments/search') }}',
+        //         data: {
+        //             'search': $value
+        //         },
+        //         success: function(data) {
+        //             $('tbody').html(data);
+        //         }
+        //     });
+        // })
+
+
+        //This code close alert not found
+        const alertTrigger = document.getElementById('liveAlertBtn')
+        if (alertTrigger) {
+            alertTrigger.addEventListener('click', () => {
+                alert('Nice, you triggered this alert message!', 'success')
+            })
         }
     </script>
 @endsection

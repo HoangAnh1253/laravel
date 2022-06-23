@@ -9,6 +9,7 @@ use App\Models\Equipment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 
@@ -17,6 +18,24 @@ class EquipmentService
     public function __construct(EquipmentRepository $equipmentRepository)
     {
         $this->equipmentRepository = $equipmentRepository;
+    }
+
+    public function getAllEquipment(){
+        return $this->equipmentRepository->getAllEquipment();
+     }
+ 
+     public function getAllEquipmentPaginate(int $paginate = 6){
+         return $this->equipmentRepository->getAllEquipmentPaginate($paginate);
+      }
+
+
+    public function getEquipmentWhere(string $field = '', $value = '')
+    {
+        return $this->equipmentRepository->getEquipmentWhere($field , $value);
+    }
+
+    public function getEquipmentWherePaginate(string $field = '', $value = '', $paginate = 6){
+        return $this->equipmentRepository->getEquipmentWherePaginate($field, $value, $paginate);
     }
 
     public function create(Request $request)
@@ -36,7 +55,7 @@ class EquipmentService
         ]);
 
         if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
+            throw new InvalidArgumentException($validator->errors()->first());
         }
         $category = Category::find($payload['categories_id']);
         $hash = Hash::make($payload['name']);
@@ -64,7 +83,7 @@ class EquipmentService
             'status' => ['in:available,used']
         ]);
         if ($validator->stopOnFirstFailure()->fails()) {
-            return new Response(["message" => "bad input"], HttpFoundationResponse::HTTP_BAD_REQUEST);
+            throw new InvalidArgumentException($validator->errors()->first());
         }
 
         return $this->equipmentRepository->update($equipment, $payload);

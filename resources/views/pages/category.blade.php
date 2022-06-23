@@ -4,7 +4,7 @@
     <section class="p-4 my-container">
         <h1>Categories</h1>
         <button onclick="addDataToModal(false, 'add')" type="button" class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#addCategoryModal">Add</button>
+            data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i>Add</button>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -21,7 +21,8 @@
                         <td>
                             <button onclick="addDataToModal({{ $category->id }}, 'edit')" type="button"
                                 class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#editCategoryModal">Edit</button>
+                                data-bs-target="#editCategoryModal"><i
+                                class="fas fa-pen-to-square"></i>Edit</button>
                             <button onclick="addDataToModal({{ $category->id }}, 'delete')" type="button"
                                 class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteCategoryModal">Delete</button>
