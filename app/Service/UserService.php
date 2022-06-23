@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -104,7 +105,12 @@ class UserService
     }
 
     public function disable(User $user){
-        return $this->userRepository->softDelete($user);
+        try{
+           $deleted = $this->userRepository->softDelete($user);
+        }catch(Exception $e){
+            return back()->withError(["message" => $e->message]);
+        }
+        return $deleted;
     }
 
     public function destroy(User $user){

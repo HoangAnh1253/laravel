@@ -50,6 +50,7 @@ Route::get('/myEquipments',[EquipmentController::class,"getEquipmentsOfUser"]
 
 Route::get('/info', function () {
     $user= Auth::user();
+   
     return view('pages.info ', ["user" => $user]);
 })->name('info');
 

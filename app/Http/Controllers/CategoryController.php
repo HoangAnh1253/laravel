@@ -70,7 +70,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $updated = $this->categoryService->update($request, $category);
-        return new CategoryResource($updated);
+        return $updated;
     }
 
     /**

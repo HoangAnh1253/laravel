@@ -1,7 +1,13 @@
 @extends('index')
 
 @section('content')
-    <section class="p-4 my-container">
+    <section id="category-section" class="p-4 my-container">
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
+                <div>{{ session('error') }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <h1>Categories</h1>
         <button onclick="addDataToModal(false, 'add')" type="button" class="btn btn-primary" data-bs-toggle="modal"
             data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i>Add</button>
@@ -20,9 +26,8 @@
                         <td class="categoryTitle">{{ $category->title }}</td>
                         <td>
                             <button onclick="addDataToModal({{ $category->id }}, 'edit')" type="button"
-                                class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#editCategoryModal"><i
-                                class="fas fa-pen-to-square"></i>Edit</button>
+                                class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCategoryModal"><i
+                                    class="fas fa-pen-to-square"></i>Edit</button>
                             <button onclick="addDataToModal({{ $category->id }}, 'delete')" type="button"
                                 class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteCategoryModal">Delete</button>
@@ -45,14 +50,14 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                       <form id="addCategoryForm" method="POST" action="{{route('addCategory')}}">
-                        {{ csrf_field() }}
-                        <div class="mb-3">
-                            <label for="add-title" class="form-label">Add</label>
-                            <input id="add-title" type="text" class="form-control" name="title">
-                            <p style="color: red" hidden id='add-title-blank-error'>Please fill in this field</p>
-                        </div>
-                       </form>
+                        <form id="addCategoryForm" method="POST" action="{{ route('addCategory') }}">
+                            {{ csrf_field() }}
+                            <div class="mb-3">
+                                <label for="add-title" class="form-label">Add</label>
+                                <input id="add-title" type="text" class="form-control" name="title">
+                                <p style="color: red" hidden id='add-title-blank-error'>Please fill in this field</p>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -130,7 +135,7 @@
             input = $(`#${idInput}`)
             blankError = $(`#${idInput}-blank-error`)
 
-            if (input.val() == ''){
+            if (input.val() == '') {
                 confirmBtn.prop("disabled", true)
                 blankError.prop("hidden", false)
             }
@@ -174,19 +179,39 @@
                 "title": input
             }
             response = await axios.patch(`http://127.0.0.1:8000/api/categories/${categoryId}`, payload)
-            editedCategory = response.data.data
-            categories.forEach(category => {
-                if (category.id == editedCategory.id) {
-                    category.title = editedCategory.title
-                    $(`#${editedCategory.id}`).find(".categoryTitle").text(editedCategory.title)
-                }
-            });
+            error = response.data.error
+            if (error) {
+                categorySection = $("#category-section")
+                if (categorySection.find(".alert-danger").length == 0) {
+                            categorySection.prepend(`
+                        <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
+                            <div>${error}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`);
+                    }
+            } else {
+                editedCategory = response.data.data
+                categories.forEach(category => {
+                    if (category.id == editedCategory.id) {
+                        category.title = editedCategory.title
+                        $(`#${editedCategory.id}`).find(".categoryTitle").text(editedCategory.title)
+                    }
+                });
+            }
         }
 
         function addCategory() {
             addCategoryForm = $(`#addCategoryForm`)
             console.log(addCategoryForm.serializeArray());
             addCategoryForm.submit()
+        }
+
+        // This code close alert not found
+        const alertTrigger = document.getElementById('liveAlertBtn')
+        if (alertTrigger) {
+            alertTrigger.addEventListener('click', () => {
+                alert('Nice, you triggered this alert message!', 'success')
+            })
         }
     </script>
 @endsection

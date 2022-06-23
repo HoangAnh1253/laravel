@@ -284,47 +284,55 @@
 
             editForm.on('submit', async function(event) {
                 event.preventDefault()
-                response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
-                error = response.data.error ? response.data.error : ''
-                if (error) {
-                    userSection = $("#user-section")
-                  
-                    if(userSection.find(".alert-danger").length == 0)
-                    {
-                        $("#user-section").prepend(`
+                _nameInput = this.querySelector("#edit-name-input").value
+                _emailInput = this.querySelector("#edit-email-input").value
+                _phoneInput = this.querySelector("#edit-phone-input").value
+                
+                allNotBlank = _nameInput && _emailInput && _phoneInput
+        
+                if (allNotBlank) {
+                    response = await axios.patch(`http://127.0.0.1:8000/api/users/${userId}`, payload)
+                    error = response.data.error ? response.data.error : ''
+                    if (error) {
+                        userSection = $("#user-section")
+
+                        if (userSection.find(".alert-danger").length == 0) {
+                            $("#user-section").prepend(`
                         <div class="alert alert-danger alert-dismissible" role="alert" style="display: inline-block">
                             <div>${error}</div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>`);
-                    }
-                } else {
-                    updatedUser = response.data.data
+                        }
+                    } else {
+                        updatedUser = response.data.data
 
-                    editedRow = $(`#${updatedUser.id}`)
-                    updateBirthdate = new Date(updatedUser.birthdate)
+                        editedRow = $(`#${updatedUser.id}`)
+                        updateBirthdate = new Date(updatedUser.birthdate)
 
-                    editedRow.find('.userName').text(updatedUser.name)
-                    editedRow.find('.userEmail').text(updatedUser.email)
-                    editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
-                    editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
-                    editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
+                        editedRow.find('.userName').text(updatedUser.name)
+                        editedRow.find('.userEmail').text(updatedUser.email)
+                        editedRow.find('.userBirthdate').text(updateBirthdate.toLocaleDateString("en-US"))
+                        editedRow.find('.userGender').text(updatedUser.gender ? "Male" : "Female")
+                        editedRow.find('.userPhonenumber').text(updatedUser.phone_number)
 
-                    for (i = 0; i < users.length; i++) {
-                        if (users[i].id = updatedUser.id) {
-                            users[i].name = updatedUser.name
-                            users[i].email = updatedUser.email
-                            users[i].phone_number = updatedUser.phone_number
-                            users[i].gender = updatedUser.gender
-                            users[i].birthdate = updatedUser.birthdate
+                        for (i = 0; i < users.length; i++) {
+                            if (users[i].id = updatedUser.id) {
+                                users[i].name = updatedUser.name
+                                users[i].email = updatedUser.email
+                                users[i].phone_number = updatedUser.phone_number
+                                users[i].gender = updatedUser.gender
+                                users[i].birthdate = updatedUser.birthdate
+                            }
                         }
                     }
+
+
+                    //editModal = $("#editUserModal")
+                    //editModal.find(".btn-secondary").click()
+
                 }
-
-
-                editModal = $("#editUserModal")
-                editModal.find(".btn-secondary").click()
             })
-            
+
             editForm.validate()
             editForm.submit()
 
@@ -337,7 +345,7 @@
             deleteForm.submit()
         }
 
-        //This code close alert not found
+        // This code close alert not found
         const alertTrigger = document.getElementById('liveAlertBtn')
         if (alertTrigger) {
             alertTrigger.addEventListener('click', () => {

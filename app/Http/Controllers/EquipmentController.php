@@ -36,7 +36,7 @@ class EquipmentController extends Controller
     public function index()
     {
         //
-        $equipments = $this->equipmentService->getAllEquipmentPaginate();
+        $equipments = $this->equipmentService->getAllEquipmentPaginate(3);
         $categories = $this->categoryService->getAllCategory();
         $users = $this->userService->getAllUser();
 

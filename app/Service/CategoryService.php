@@ -2,12 +2,15 @@
 
 namespace App\Service;
 
+use App\Http\Resources\CategoryResource;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
@@ -49,29 +52,34 @@ class CategoryService
         ]);
 
         $validator = Validator::make($payload, [
-            'title' => ['required', 'string']
+            'title' => ['required', 'string', 'unique:categories']
         ]);
 
         if ($validator->stopOnFirstFailure()->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
+            return back()->withError($validator->errors()->first());
         }
         
         $this->categoryRepository->create($payload);
     }
 
     public function update(Request $request, Category $category){
+        // return response()->json([
+        //     "error" =>  'aaa'
+        // ]);
         $payload = $request->only([
             'title',
         ]);
 
         $validator = Validator::make($payload, [
-            'title' => ['required', 'string'],
+            'title' => ['required', 'string', Rule::unique('categories')->ignore($category)],
         ]);
         if ($validator->stopOnFirstFailure()->fails()) {
-            throw new InvalidArgumentException($validator->errors()->first());
+            return response()->json([
+                "error" =>  $validator->errors()->first()
+            ]);
         }
 
-        return $this->categoryRepository->update($category, $payload);
+        return new CategoryResource($this->categoryRepository->update($category, $payload));
     }
 
     public function disable(Category $category){

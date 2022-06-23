@@ -46,44 +46,47 @@
         <table class="table table-hover">
             <thead class="table-light">
                 <tr>
-                    <th scope="col">Serial Number</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Using by</th>
-                    <th scope="col">Actions</th>
+                    <th class="text-center" scope="col">Serial Number</th>
+                    <th class="text-center" scope="col">Name</th>
+                    <th class="text-center" scope="col">Description</th>
+                    <th class="text-center" scope="col">Category</th>
+                    <th class="text-center" scope="col">Status</th>
+                    <th class="text-center" scope="col">Using by</th>
+                    <th class="text-center" scope="col" colspan="3">Actions</th>
                 </tr>
             </thead>
             <tbody id="equipment-table-body">
                 @foreach ($equipments as $equipment)
                     <tr id="{{ $equipment->serial_number }}" class="table-row {{ $equipment->category->title }}">
-                        <th scope="row">{{ $equipment->serial_number }}</th>
+                        <th class="text-center" scope="row">{{ $equipment->serial_number }}</th>
                         <td class="equipName">{{ $equipment->name }}</td>
                         <td class="equipDesc">{{ $equipment->desc }}</td>
-                        <td class="equipCategory">{{ $equipment->category->title }}</td>
-                        <td class="equipStatus">{{ $equipment->status }}</td>
-                        <td class="equipUser">
+                        <td class="text-center equipCategory">{{ $equipment->category->title }}</td>
+                        <td class="text-center equipStatus">{{ $equipment->status }}</td>
+                        <td class="text-center equipUser">
                             {{ isset($equipment->user->name) ? $equipment->user->name . ' (ID: ' . $equipment->user->id . ')' : '' }}
                         </td>
 
                         <td>
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','edit')}" value="1"
-                                class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editEquipModal"><i
-                                    class="fas fa-pen-to-square"></i>Edit</button>
+                                class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editEquipModal">
+                                <i class="fas fa-pen-to-square"></i>Edit</button>
+                        </td>
+                        <td>
                             <button onclick="openAssignModal('<?php echo $equipment->serial_number; ?>')" class="btn btn-warning"
-                                data-bs-toggle="modal" data-bs-target="#assignEquipModal"><i
+                                data-bs-toggle="modal" data-bs-target="#assignEquipModal"
+                                {{ isset($equipment->user->name) ? 'hidden' : '' }}><i
                                     class="fas fa-user-check"></i>Assign</button>
 
                             <button onclick="unAssignEquipment(this.parentNode.parentNode.id,this)"
                                 class="btn btn-secondary unassign-btn"
                                 {{ isset($equipment->user->name) ? '' : 'hidden' }}><i
                                     class="fas fa-user-xmark"></i>Unassigned</button>
-
-
+                        </td>
+                        <td>
                             <button onclick="{addDataToModel('<?php echo $equipment->serial_number; ?>','delete')}" class="btn btn-danger"
                                 data-bs-toggle="modal" data-bs-target="#deleteEquipModal">Delete</button>
-                               
+
                         </td>
                     </tr>
                 @endforeach
@@ -269,7 +272,7 @@
 
                 input = $("#search-by-user-input").val()
                 index = input.indexOf('(') - 1
-                console.log(index);
+              
                 id = -1
                 userName = ''
                 if (index >= 0) {
@@ -321,15 +324,18 @@
             response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
             editedRow = $(`#${serial_number}`)
 
-
+           
 
             editedRowUser = editedRow.find(".equipUser")
             editedRowUser.text("")
 
             editedRowStatus = editedRow.find(".equipStatus")
             editedRowStatus.text(response.data.data.status)
-
+         
             unAssignBtn.hidden = true
+           
+            assignBtn = unAssignBtn.parentNode.querySelector('.btn-warning')
+            assignBtn.hidden = false
         }
 
         async function assignEquipment() {
@@ -386,6 +392,9 @@
 
                 editedRowUnassignBtn = editedRow.find(".unassign-btn")
                 editedRowUnassignBtn.prop("hidden", false)
+
+                editedRowAssignBtn = editedRow.find(".btn-warning")
+                editedRowAssignBtn.prop("hidden", true)
 
                 assignModal = $("#assignEquipModal")
                 assignModal.find(".btn-secondary").click()
