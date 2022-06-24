@@ -6,7 +6,7 @@
         <form method="GET" id="search-form">
             <div class="input-group">
                 <div class="form-outline">
-                    <input type="search" id="search-input" class="form-control" />
+                    <input type="search" id="search-input" class="form-control" placeholder="Enter equipment's id"/>
                 </div>
                 <button onclick="searchEquipment(event)" id="search-btn" style="height: 38px" type="button"
                     class="btn btn-primary">
@@ -29,7 +29,7 @@
 
         <div style="position: relative" class="autocomplete form-outline">
             <label style="margin-top: 40px" for=""><b>Filter by User</b></label>
-            <input id="search-by-user-input" class="form-control" />
+            <input id="search-by-user-input" class="form-control"  placeholder="Enter user's name or user's id"/>
 
             <p style="color: red" hidden id='search-user-equipment-notfound-error'>User not found</p>
 
@@ -192,7 +192,7 @@
                         <div class="mb-3 autocomplete">
                             <label for="assign-euqipment-input" class="form-label">User's name or ID</label>
                             <input id="assign-equipment-input" type="text" class="form-control"
-                                name="assign-equipment" value="">
+                                name="assign-equipment" value="" placeholder="Enter user's name or user's id">
                             <p style="color: red" hidden id='assign-blank-error'>Please fill in this field</p>
                             <p style="color: red" hidden id='assign-notfound-error'>User not found</p>
 
