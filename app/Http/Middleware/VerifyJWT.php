@@ -3,8 +3,11 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 class VerifyJWT
 {
@@ -19,7 +22,14 @@ class VerifyJWT
     {
         if ($jwt = $request->cookie('jwt'))
                 $request->headers->set('Authorization', 'Bearer ' . $jwt);
-        $user = JWTAuth::parseToken()->authenticate();
+        try{
+            $user = JWTAuth::parseToken()->authenticate();
+        }catch(Exception $e){
+            return new Response(["Message" => $e->getMessage()], HttpFoundationResponse::HTTP_UNAUTHORIZED);
+        }
+        if(!$user->is_admin){
+            return new Response(["Message" => "You are not authorize"], HttpFoundationResponse::HTTP_UNAUTHORIZED);
+        }
         error_log($user);
         return $next($request);
     }
