@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 use App\Models\User;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTFactory;
 
 class AuthController extends Controller
 {
@@ -50,7 +52,9 @@ class AuthController extends Controller
         if (!$token) {
             return response(view('login', ['status' => 400]), HttpFoundationResponse::HTTP_BAD_REQUEST);
         }
-        return redirect()->route('home');
+      
+        $jwt = JWTAuth::fromUser(Auth::user());
+        return redirect()->route('home')->withCookie('jwt', $jwt);
     }
 
     public function logout()

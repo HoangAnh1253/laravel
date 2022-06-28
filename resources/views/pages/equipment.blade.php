@@ -6,7 +6,7 @@
         <form method="GET" id="search-form">
             <div class="input-group">
                 <div class="form-outline">
-                    <input type="search" id="search-input" class="form-control" placeholder="Enter equipment's id"/>
+                    <input type="search" id="search-input" class="form-control" placeholder="Enter equipment's id" />
                 </div>
                 <button onclick="searchEquipment(event)" id="search-btn" style="height: 38px" type="button"
                     class="btn btn-primary">
@@ -29,7 +29,7 @@
 
         <div style="position: relative" class="autocomplete form-outline">
             <label style="margin-top: 40px" for=""><b>Filter by User</b></label>
-            <input id="search-by-user-input" class="form-control"  placeholder="Enter user's name or user's id"/>
+            <input id="search-by-user-input" class="form-control" placeholder="Enter user's name or user's id" />
 
             <p style="color: red" hidden id='search-user-equipment-notfound-error'>User not found</p>
 
@@ -97,7 +97,8 @@
         </div>
 
         <!-- Edit Equipment Modal -->
-        <div class="modal fade" id="editEquipModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+        <div class="modal fade" id="editEquipModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="false">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -251,6 +252,15 @@
     </section>
     <!-- Button trigger modal -->
     <script>
+        const getCookie = (cookie_name) => {
+            // Construct a RegExp object as to include the variable name
+            const re = new RegExp(`(?<=jwt=)[^;]*`);
+            try {
+                return document.cookie.match(re)[0]; // Will raise TypeError if cookie is not found
+            } catch {
+                return "this-cookie-doesn't-exist";
+            }
+        }
         var isAssignSelected = false
         let equipments = <?php echo json_encode($equipments); ?>;
         console.log(equipments);
@@ -272,7 +282,7 @@
 
                 input = $("#search-by-user-input").val()
                 index = input.indexOf('(') - 1
-              
+
                 id = -1
                 userName = ''
                 if (index >= 0) {
@@ -324,16 +334,16 @@
             response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
             editedRow = $(`#${serial_number}`)
 
-           
+
 
             editedRowUser = editedRow.find(".equipUser")
             editedRowUser.text("")
 
             editedRowStatus = editedRow.find(".equipStatus")
             editedRowStatus.text(response.data.data.status)
-         
+
             unAssignBtn.hidden = true
-           
+
             assignBtn = unAssignBtn.parentNode.querySelector('.btn-warning')
             assignBtn.hidden = false
         }
@@ -492,6 +502,12 @@
             } else if (editDesc == '') {
                 $("#edit-desc").after("<p>Please fill in this field</p>")
             } else {
+                // token = getCookie("jwt")
+                // let config = {
+                //     headers: {
+                //         Authorization: 'Bearer ' + 'eyJpdiI6ImJ2S0JFanRmK0ZXck9aT1pGUTVYOGc9PSIsInZhbHVlIjoiVDllZU5xNEM4NHkxcmZzZ2xlUkYyMmVHSE1qbnRHcVRnSEJnMytJSGxLVEVveVZhM3JFZUZyazJCV0N5RDl0M01FN1dhUHNVRWd1UXhjUGwzTisvMDJRVmJ4anhLMHNOeEU0NWZsYjNSMis0NlBBOFBlT2JRUXpEVDNTSXVIRFFxcjloaTliM1lpWVdKQndvZGszd1JMUU5hbm5VTHN5ZDV1aXFlRmxYb0lXVk5xc0l5Z1RQbjUzOWxWNDgrYUpsN3A1NVM4T3hPUFJZRFVTTDRHVyt3d052cWs2TzZjanJZdXFDZ0VIanlnMENRNlVPY0dFRzF6eVVCU01wcUhKTldscXp6T2E1NFUxRm1YYTBCc0JyRGU1Y0JoSFc4K3MzVWFPckNLWUJtYmorWG5KclRXbVo2NEQ5WjAwR0RQMmhwMWZlWVJHU2ljWk1BUlk3cVc1SCtjRTkrMUY1bWdyaU92SVdOaU93ejd0WEt3c0RkWXUzK21RM3Ryc0dJKzlPeFBDU1VZcW04TzJsK3BINHZNTS9VYVZ4VUE2N21XajJiYys2OXZNbEZVeEZKU09RZ3Y3YXczMUdYSVNMODVYVSIsIm1hYyI6ImE0ZjdhMjg3MjYwY2FmOWEyMjA1MTUxMWQ4ODdlMTZkM2FkZjE2OWQxZjZmNGZhMGJjMGUxNmUxYWExYjk3OGUiLCJ0YWciOiIifQ%3D%3D',
+                //     }
+                // }
                 response = await axios.patch(`http://127.0.0.1:8000/api/equipments/${serial_number}`, payload)
                 editedRow = $(`#${serial_number}`)
 
